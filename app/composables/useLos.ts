@@ -1,14 +1,14 @@
 import { ref, computed } from 'vue'
 import { useToast } from './useToast'
 
-interface LosCheckResult {
+export interface LosCheckResult {
   hasWon: boolean
   prize: string | null
   drawDate: string
   checkedAt: string
 }
 
-interface Los {
+export interface Los {
   _id: string
   losNummer: string
   anbieter: string
@@ -24,7 +24,6 @@ interface Los {
 interface CreateLosData {
   losNummer: string
   anbieter: string
-  losTyp: string
   displayName?: string
 }
 
@@ -42,7 +41,7 @@ export function useLos() {
     try {
       const data = await $fetch<Los[]>('/api/los')
       lose.value = data
-    } catch (e) {
+    } catch {
       error('Lose konnten nicht geladen werden')
     } finally {
       isLoading.value = false
@@ -59,8 +58,8 @@ export function useLos() {
       lose.value.unshift(newLos)
       success('Los wurde hinzugefügt')
       return newLos
-    } catch (e: any) {
-      error(e?.data?.message || 'Los konnte nicht erstellt werden')
+    } catch (e) {
+      error((e as { data?: { message?: string } })?.data?.message || 'Los konnte nicht erstellt werden')
       return null
     } finally {
       isCreating.value = false
@@ -73,12 +72,12 @@ export function useLos() {
         method: 'PUT',
         body: data,
       })
-      const index = lose.value.findIndex(l => l._id === id)
+      const index = lose.value.findIndex((l) => l._id === id)
       if (index !== -1) lose.value[index] = updated
       success('Los wurde aktualisiert')
       return updated
-    } catch (e: any) {
-      error(e?.data?.message || 'Los konnte nicht aktualisiert werden')
+    } catch (e) {
+      error((e as { data?: { message?: string } })?.data?.message || 'Los konnte nicht aktualisiert werden')
       return null
     }
   }
@@ -87,10 +86,10 @@ export function useLos() {
     isDeleting.value = id
     try {
       await $fetch(`/api/los/${id}`, { method: 'DELETE' })
-      lose.value = lose.value.filter(l => l._id !== id)
+      lose.value = lose.value.filter((l) => l._id !== id)
       success('Los wurde gelöscht')
-    } catch (e: any) {
-      error(e?.data?.message || 'Los konnte nicht gelöscht werden')
+    } catch (e) {
+      error((e as { data?: { message?: string } })?.data?.message || 'Los konnte nicht gelöscht werden')
     } finally {
       isDeleting.value = null
     }
@@ -99,24 +98,24 @@ export function useLos() {
   async function quickCheck(id: string) {
     isChecking.value = id
     try {
-      const result = await $fetch<{ los: Los; results: any[] }>(`/api/los/${id}/check`, {
+      const result = await $fetch<{ los: Los; results: LosCheckResult[] }>(`/api/los/${id}/check`, {
         method: 'POST',
       })
       // Update the los in the list
-      const index = lose.value.findIndex(l => l._id === id)
+      const index = lose.value.findIndex((l) => l._id === id)
       if (index !== -1) lose.value[index] = result.los
       success('Los wurde geprüft')
       return result
-    } catch (e: any) {
-      error(e?.data?.message || 'Quick-Check fehlgeschlagen')
+    } catch (e) {
+      error((e as { data?: { message?: string } })?.data?.message || 'Quick-Check fehlgeschlagen')
       return null
     } finally {
       isChecking.value = null
     }
   }
 
-  const activeLose = computed(() => lose.value.filter(l => l.isActive))
-  const wonLose = computed(() => lose.value.filter(l => l.lastCheckResult?.hasWon))
+  const activeLose = computed(() => lose.value.filter((l) => l.isActive))
+  const wonLose = computed(() => lose.value.filter((l) => l.lastCheckResult?.hasWon))
 
   return {
     lose,

@@ -1,9 +1,11 @@
 import { createAuthClient } from 'better-auth/vue'
-
-export const authClient = createAuthClient({
-  baseURL: '/api/auth',
-})
+import { emailOTPClient, magicLinkClient  } from 'better-auth/client/plugins'
 
 export function useAuth() {
-  return authClient
+  const origin = import.meta.server ? useRequestURL().origin : window.location.origin
+  const client = createAuthClient({
+    baseURL: `${origin}/api/auth`,
+    plugins: [emailOTPClient(), magicLinkClient()],
+  })
+  return client
 }

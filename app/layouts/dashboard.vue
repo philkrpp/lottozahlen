@@ -3,13 +3,18 @@
     <AppSidebar />
 
     <!-- Mobile Topbar -->
-    <v-app-bar v-if="mobile" flat density="compact" :style="{ background: 'var(--navbar-bg)', backdropFilter: 'blur(12px)' }">
+    <v-app-bar
+      v-if="mobile"
+      flat
+      density="compact"
+      :style="{ background: 'var(--navbar-bg)', backdropFilter: 'blur(12px)' }"
+    >
       <NuxtLink to="/dashboard" class="text-decoration-none ml-4">
         <span class="text-h6 font-weight-bold text-gradient">Lottozahlen</span>
       </NuxtLink>
       <v-spacer />
       <ThemeToggle class="mr-2" />
-      <v-btn icon="mdi-logout" variant="text" size="small" @click="handleLogout" class="mr-2" />
+      <v-btn icon="mdi-logout" variant="text" size="small" class="mr-2" @click="handleLogout" />
     </v-app-bar>
 
     <v-main>

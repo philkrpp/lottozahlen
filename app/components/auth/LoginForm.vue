@@ -2,19 +2,14 @@
   <div>
     <h2 class="text-h5 font-weight-bold text-center mb-6">Willkommen zurück</h2>
 
-    <OAuthButtons class="mb-6" />
-
-    <div class="d-flex align-center mb-6">
-      <v-divider />
-      <span class="mx-4 text-body-2" style="color: var(--v-theme-secondary)">oder</span>
-      <v-divider />
-    </div>
+    <OAuthButtons />
 
     <v-form @submit.prevent="handleLogin">
       <v-text-field
         v-model="email"
         label="E-Mail"
         type="email"
+        autocomplete="email"
         prepend-inner-icon="mdi-email"
         :error-messages="errors.email"
         class="mb-2"
@@ -23,11 +18,12 @@
         v-model="password"
         label="Passwort"
         :type="showPassword ? 'text' : 'password'"
+        autocomplete="current-password"
         prepend-inner-icon="mdi-lock"
         :append-inner-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
-        @click:append-inner="showPassword = !showPassword"
         :error-messages="errors.password"
         class="mb-2"
+        @click:append-inner="showPassword = !showPassword"
       />
 
       <div class="text-right mb-4">
@@ -36,15 +32,7 @@
         </NuxtLink>
       </div>
 
-      <v-btn
-        type="submit"
-        color="primary"
-        block
-        size="large"
-        :loading="loading"
-      >
-        Anmelden
-      </v-btn>
+      <v-btn type="submit" color="primary" block size="large" :loading="loading"> Anmelden </v-btn>
     </v-form>
 
     <v-alert v-if="errorMsg" type="error" variant="tonal" class="mt-4" density="compact">
@@ -78,18 +66,28 @@ async function handleLogin() {
   errors.value = {}
   errorMsg.value = ''
 
-  if (!email.value) { errors.value.email = 'E-Mail ist erforderlich'; return }
-  if (!password.value) { errors.value.password = 'Passwort ist erforderlich'; return }
+  if (!email.value) {
+    errors.value.email = 'E-Mail ist erforderlich'
+    return
+  }
+  if (!password.value) {
+    errors.value.password = 'Passwort ist erforderlich'
+    return
+  }
 
   loading.value = true
   try {
     const result = await signIn.email({ email: email.value, password: password.value })
     if (result.error) {
+      if (result.error.code === 'EMAIL_NOT_VERIFIED') {
+        navigateTo({ path: '/verify-email', query: { email: email.value } })
+        return
+      }
       errorMsg.value = 'Ungültige E-Mail oder Passwort'
     } else {
       navigateTo('/dashboard')
     }
-  } catch (e: any) {
+  } catch {
     errorMsg.value = 'Anmeldung fehlgeschlagen'
   } finally {
     loading.value = false

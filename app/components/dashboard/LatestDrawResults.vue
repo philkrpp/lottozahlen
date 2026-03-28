@@ -8,16 +8,25 @@
     </div>
 
     <div v-if="draws.length === 0" class="text-center pa-4">
-      <p class="text-body-2" style="color: var(--v-theme-secondary)">Noch keine Ziehungen vorhanden.</p>
+      <p class="text-body-2" style="color: var(--v-theme-secondary)">
+        Noch keine Ziehungen vorhanden.
+      </p>
     </div>
 
-    <div v-for="draw in draws" :key="draw._id" class="mb-3 pb-3" style="border-bottom: 1px solid var(--glass-border)">
+    <div
+      v-for="draw in draws"
+      :key="draw._id"
+      class="mb-3 pb-3"
+      style="border-bottom: 1px solid var(--glass-border)"
+    >
       <div class="d-flex justify-space-between align-center mb-2">
         <span class="text-caption font-weight-bold">{{ formatDate(draw.drawDate) }}</span>
         <v-chip size="x-small" variant="tonal">{{ draw.drawType || 'Hauptziehung' }}</v-chip>
       </div>
       <div class="d-flex flex-wrap ga-1">
-        <span v-for="num in draw.results.winningNumbers" :key="num" class="lotto-ball">{{ num }}</span>
+        <span v-for="num in draw.results.winningNumbers" :key="num" class="lotto-ball">{{
+          num
+        }}</span>
       </div>
     </div>
   </v-card>

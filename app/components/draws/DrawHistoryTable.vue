@@ -11,7 +11,12 @@
     </template>
     <template #item.results="{ item }">
       <div class="d-flex flex-wrap ga-1">
-        <span v-for="num in item.results.winningNumbers" :key="num" class="lotto-ball" style="width: 32px; height: 32px; font-size: 0.75rem;">
+        <span
+          v-for="num in item.results.winningNumbers"
+          :key="num"
+          class="lotto-ball"
+          style="width: 32px; height: 32px; font-size: 0.75rem"
+        >
           {{ num }}
         </span>
       </div>

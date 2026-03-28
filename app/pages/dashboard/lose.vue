@@ -2,14 +2,12 @@
   <div>
     <div class="d-flex justify-space-between align-center mb-6">
       <h1 class="text-h4 font-weight-bold">Meine Lose</h1>
-      <v-btn color="primary" prepend-icon="mdi-plus" @click="openAddDialog">
-        Los hinzufügen
-      </v-btn>
+      <v-btn color="primary" prepend-icon="mdi-plus" @click="openAddDialog"> Los hinzufügen </v-btn>
     </div>
 
     <!-- Search / Filter Bar -->
     <v-card class="glass-card pa-4 mb-6">
-      <v-row dense>
+      <v-row density="comfortable">
         <v-col cols="12" sm="4">
           <v-text-field
             v-model="searchText"
@@ -93,16 +91,16 @@
     </v-row>
 
     <!-- Result count -->
-    <p v-if="filteredLose.length > 0" class="text-caption mt-4" style="color: var(--v-theme-secondary)">
+    <p
+      v-if="filteredLose.length > 0"
+      class="text-caption mt-4"
+      style="color: var(--v-theme-secondary)"
+    >
       {{ filteredLose.length }} von {{ lose.length }} Losen
     </p>
 
     <!-- Add/Edit Dialog -->
-    <LosFormDialog
-      v-model="showFormDialog"
-      :edit-los="editingLos"
-      @submit="handleSubmit"
-    />
+    <LosFormDialog v-model="showFormDialog" :edit-los="editingLos" @submit="handleSubmit" />
 
     <!-- Delete Confirm -->
     <LosDeleteConfirm
@@ -115,7 +113,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
-import { useLos } from '~/composables/useLos'
+import { useLos, type Los } from '~/composables/useLos'
 import { ANBIETER } from '~/utils/constants'
 import LosOverviewCard from '~/components/dashboard/LosOverviewCard.vue'
 import LosFormDialog from '~/components/los/LosFormDialog.vue'
@@ -146,11 +144,11 @@ const filterStatus = ref<string | null>(null)
 
 const showFormDialog = ref(false)
 const showDeleteDialog = ref(false)
-const editingLos = ref<any>(null)
+const editingLos = ref<Los | null>(null)
 const deletingLosId = ref<string | null>(null)
 
 const anbieterFilterItems = computed(() =>
-  Object.values(ANBIETER).map(a => ({ title: a.name, value: a.slug }))
+  Object.values(ANBIETER).map((a) => ({ title: a.name, value: a.slug })),
 )
 
 const statusFilterItems = [
@@ -167,32 +165,30 @@ const filteredLose = computed(() => {
   if (searchText.value) {
     const q = searchText.value.toLowerCase()
     result = result.filter(
-      l =>
-        l.losNummer.includes(q) ||
-        (l.displayName && l.displayName.toLowerCase().includes(q))
+      (l) => l.losNummer.includes(q) || (l.displayName && l.displayName.toLowerCase().includes(q)),
     )
   }
 
   if (filterAnbieter.value) {
-    result = result.filter(l => l.anbieter === filterAnbieter.value)
+    result = result.filter((l) => l.anbieter === filterAnbieter.value)
   }
 
   if (filterStatus.value) {
     switch (filterStatus.value) {
       case 'active':
-        result = result.filter(l => l.isActive)
+        result = result.filter((l) => l.isActive)
         break
       case 'inactive':
-        result = result.filter(l => !l.isActive)
+        result = result.filter((l) => !l.isActive)
         break
       case 'won':
-        result = result.filter(l => l.lastCheckResult?.hasWon)
+        result = result.filter((l) => l.lastCheckResult?.hasWon)
         break
       case 'pending':
-        result = result.filter(l => l.isActive && !l.lastCheckResult)
+        result = result.filter((l) => l.isActive && !l.lastCheckResult)
         break
       case 'checked':
-        result = result.filter(l => l.lastCheckResult && !l.lastCheckResult.hasWon)
+        result = result.filter((l) => l.lastCheckResult && !l.lastCheckResult.hasWon)
         break
     }
   }
@@ -216,7 +212,7 @@ function openAddDialog() {
 }
 
 function handleEdit(id: string) {
-  editingLos.value = lose.value.find(l => l._id === id) || null
+  editingLos.value = lose.value.find((l) => l._id === id) || null
   showFormDialog.value = true
 }
 
@@ -233,12 +229,7 @@ async function confirmDelete() {
   }
 }
 
-async function handleSubmit(data: {
-  losNummer: string
-  anbieter: string
-  losTyp: string
-  displayName?: string
-}) {
+async function handleSubmit(data: { losNummer: string; anbieter: string; displayName?: string }) {
   if (editingLos.value) {
     await updateLos(editingLos.value._id, data)
   } else {

@@ -1,17 +1,28 @@
 @use 'variables' as *;
 
 // Google Fonts
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&display=swap');
 
 // Global Styles
-html, body {
+html,
+body {
   font-family: $font-body;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-h1, h2, h3, h4, h5, h6,
-.text-h1, .text-h2, .text-h3, .text-h4, .text-h5, .text-h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.text-h1,
+.text-h2,
+.text-h3,
+.text-h4,
+.text-h5,
+.text-h6 {
   font-family: $font-heading !important;
 }
 
@@ -123,6 +134,15 @@ h1, h2, h3, h4, h5, h6,
   @media (max-width: 960px) {
     padding: 48px 0;
   }
+}
+
+// Tooltip Styling
+.v-tooltip > .v-overlay__content {
+  background: rgba(33, 33, 33, 0.9) !important;
+  color: #fff !important;
+  font-size: 0.75rem;
+  padding: 4px 8px;
+  border-radius: 4px;
 }
 
 // Sticky Navbar with backdrop blur

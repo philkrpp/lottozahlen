@@ -12,9 +12,16 @@
           <v-chip size="x-small" variant="tonal">{{ draw.drawType || 'Hauptziehung' }}</v-chip>
         </div>
         <div class="d-flex flex-wrap ga-1 mb-2">
-          <span v-for="num in draw.results.winningNumbers" :key="num" class="lotto-ball">{{ num }}</span>
+          <span v-for="num in draw.results.winningNumbers" :key="num" class="lotto-ball">{{
+            num
+          }}</span>
         </div>
-        <v-chip v-if="hasWonInDraw(draw)" color="accent" size="small" prepend-icon="mdi-party-popper">
+        <v-chip
+          v-if="hasWonInDraw(draw)"
+          color="accent"
+          size="small"
+          prepend-icon="mdi-party-popper"
+        >
           Gewonnen!
         </v-chip>
       </v-card>

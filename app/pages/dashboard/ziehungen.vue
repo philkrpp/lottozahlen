@@ -4,7 +4,7 @@
 
     <!-- Filter Bar -->
     <v-card class="glass-card pa-4 mb-6">
-      <v-row dense align="center">
+      <v-row density="comfortable" align="center">
         <v-col cols="12" sm="6" md="4">
           <v-select
             v-model="selectedAnbieter"
@@ -17,13 +17,15 @@
           />
         </v-col>
         <v-col cols="12" sm="6" md="4">
-          <v-btn-toggle v-model="viewMode" mandatory density="compact" color="primary" variant="outlined">
-            <v-btn value="timeline" prepend-icon="mdi-timeline">
-              Timeline
-            </v-btn>
-            <v-btn value="table" prepend-icon="mdi-table">
-              Tabelle
-            </v-btn>
+          <v-btn-toggle
+            v-model="viewMode"
+            mandatory
+            density="compact"
+            color="primary"
+            variant="outlined"
+          >
+            <v-btn value="timeline" prepend-icon="mdi-timeline"> Timeline </v-btn>
+            <v-btn value="table" prepend-icon="mdi-table"> Tabelle </v-btn>
           </v-btn-toggle>
         </v-col>
       </v-row>
@@ -47,10 +49,7 @@
 
     <!-- Table View -->
     <template v-else>
-      <DrawHistoryTable
-        :draws="draws"
-        :loading="isLoading"
-      />
+      <DrawHistoryTable :draws="draws" :loading="isLoading" />
     </template>
 
     <!-- Pagination -->
@@ -87,7 +86,7 @@ const selectedAnbieter = ref<string | null>(null)
 const viewMode = ref<'timeline' | 'table'>('timeline')
 
 const anbieterItems = computed(() =>
-  Object.values(ANBIETER).map(a => ({ title: a.name, value: a.slug }))
+  Object.values(ANBIETER).map((a) => ({ title: a.name, value: a.slug })),
 )
 
 onMounted(() => {

@@ -7,7 +7,9 @@
           <v-chip size="x-small" variant="tonal" color="primary">{{ anbieterLabel }}</v-chip>
           <v-chip size="x-small" variant="tonal">{{ losTypLabel }}</v-chip>
         </div>
-        <p v-if="displayName" class="text-body-2 mb-1" style="color: var(--v-theme-secondary)">{{ displayName }}</p>
+        <p v-if="displayName" class="text-body-2 mb-1" style="color: var(--v-theme-secondary)">
+          {{ displayName }}
+        </p>
         <LosStatusChip :last-check-result="lastCheckResult" :is-active="isActive" />
         <LastCheckInfo :last-check-result="lastCheckResult" class="mt-1" />
       </div>
@@ -19,7 +21,12 @@
           </template>
           <v-list density="compact">
             <v-list-item prepend-icon="mdi-pencil" title="Bearbeiten" @click="$emit('edit', id)" />
-            <v-list-item prepend-icon="mdi-delete" title="Löschen" class="text-error" @click="$emit('delete', id)" />
+            <v-list-item
+              prepend-icon="mdi-delete"
+              title="Löschen"
+              class="text-error"
+              @click="$emit('delete', id)"
+            />
           </v-list>
         </v-menu>
       </div>
@@ -41,7 +48,12 @@ const props = defineProps<{
   losTyp: string
   displayName?: string
   isActive: boolean
-  lastCheckResult: { hasWon: boolean; prize: string | null; checkedAt: string; drawDate: string } | null
+  lastCheckResult: {
+    hasWon: boolean
+    prize: string | null
+    checkedAt: string
+    drawDate: string
+  } | null
   isChecking: string | null
 }>()
 
@@ -58,7 +70,7 @@ const anbieterLabel = computed(() => {
 
 const losTypLabel = computed(() => {
   const a = ANBIETER[props.anbieter as keyof typeof ANBIETER]
-  const t = a?.losTypen.find(lt => lt.value === props.losTyp)
+  const t = a?.losTypen.find((lt) => lt.value === props.losTyp)
   return t?.label || props.losTyp
 })
 </script>

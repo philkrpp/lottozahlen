@@ -7,8 +7,15 @@ export default defineEventHandler(async (event) => {
   const type = body.type || 'email'
 
   const settings = await NotificationSetting.findOne({ userId })
-  if (!settings) throw createError({ statusCode: 404, message: 'Keine Benachrichtigungs-Einstellungen gefunden' })
+  if (!settings)
+    throw createError({
+      statusCode: 404,
+      message: 'Keine Benachrichtigungs-Einstellungen gefunden',
+    })
 
   await sendTestNotification(settings, type, event.context.user)
-  return { success: true, message: `Test-${type === 'email' ? 'E-Mail' : 'Slack-Nachricht'} wurde gesendet` }
+  return {
+    success: true,
+    message: `Test-${type === 'email' ? 'E-Mail' : 'Slack-Nachricht'} wurde gesendet`,
+  }
 })

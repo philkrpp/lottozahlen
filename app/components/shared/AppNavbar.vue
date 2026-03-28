@@ -30,23 +30,29 @@
   </v-app-bar>
 
   <!-- Mobile Drawer -->
-  <v-navigation-drawer v-model="drawer" temporary location="right">
-    <v-list>
-      <v-list-item @click="scrollTo('features'); drawer = false">
-        <v-list-item-title>Features</v-list-item-title>
-      </v-list-item>
-      <v-list-item @click="scrollTo('how-it-works'); drawer = false">
-        <v-list-item-title>Wie es funktioniert</v-list-item-title>
-      </v-list-item>
-      <v-divider class="my-2" />
-      <v-list-item to="/login" @click="drawer = false">
-        <v-list-item-title>Login</v-list-item-title>
-      </v-list-item>
-      <v-list-item to="/register" @click="drawer = false">
-        <v-list-item-title>Registrieren</v-list-item-title>
-      </v-list-item>
-    </v-list>
-  </v-navigation-drawer>
+  <ClientOnly>
+    <v-navigation-drawer v-model="drawer" temporary location="right">
+      <v-list>
+        <v-list-item
+          @click="scrollTo('features'); drawer = false"
+        >
+          <v-list-item-title>Features</v-list-item-title>
+        </v-list-item>
+        <v-list-item
+          @click="scrollTo('how-it-works'); drawer = false"
+        >
+          <v-list-item-title>Wie es funktioniert</v-list-item-title>
+        </v-list-item>
+        <v-divider class="my-2" />
+        <v-list-item to="/login" @click="drawer = false">
+          <v-list-item-title>Login</v-list-item-title>
+        </v-list-item>
+        <v-list-item to="/register" @click="drawer = false">
+          <v-list-item-title>Registrieren</v-list-item-title>
+        </v-list-item>
+      </v-list>
+    </v-navigation-drawer>
+  </ClientOnly>
 </template>
 
 <script setup lang="ts">

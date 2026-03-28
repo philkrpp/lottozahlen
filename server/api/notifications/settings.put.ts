@@ -19,7 +19,7 @@ export default defineEventHandler(async (event) => {
   const settings = await NotificationSetting.findOneAndUpdate(
     { userId },
     { $set: data },
-    { new: true, upsert: true },
+    { returnDocument: 'after', upsert: true },
   )
 
   return settings

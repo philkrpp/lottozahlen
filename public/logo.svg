@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
+  <defs>
+    <linearGradient id="ticketGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0D9488"/>
+      <stop offset="100%" stop-color="#0EA5E9"/>
+    </linearGradient>
+  </defs>
+  <!-- Ticket body with serrated right edge -->
+  <path d="
+    M 80 96
+    L 352 96
+    L 352 128
+    L 336 144
+    L 352 160
+    L 352 192
+    L 336 208
+    L 352 224
+    L 352 256
+    L 336 272
+    L 352 288
+    L 352 320
+    L 336 336
+    L 352 352
+    L 352 384
+    L 336 400
+    L 352 416
+    L 80 416
+    Q 64 416 64 400
+    L 64 112
+    Q 64 96 80 96
+    Z
+  " fill="url(#ticketGrad)" rx="16"/>
+  <!-- Dashed separator line -->
+  <line x1="260" y1="120" x2="260" y2="392" stroke="white" stroke-opacity="0.3" stroke-width="3" stroke-dasharray="12 8"/>
+  <!-- Checkmark -->
+  <path d="M 120 260 L 175 315 L 235 195" stroke="white" stroke-width="32" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  <!-- Small decorative dots on right side (numbers area) -->
+  <circle cx="300" cy="176" r="8" fill="white" fill-opacity="0.5"/>
+  <circle cx="300" cy="224" r="8" fill="white" fill-opacity="0.5"/>
+  <circle cx="300" cy="272" r="8" fill="white" fill-opacity="0.5"/>
+  <circle cx="300" cy="320" r="8" fill="white" fill-opacity="0.5"/>
+</svg>

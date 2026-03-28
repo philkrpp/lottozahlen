@@ -4,12 +4,20 @@ export default defineNuxtConfig({
   ssr: true,
   devtools: { enabled: true },
 
+  app: {
+    head: {
+      link: [
+        { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' },
+        { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
+        { rel: 'apple-touch-icon', sizes: '180x180', href: '/apple-touch-icon.png' },
+      ],
+    },
+  },
+
   srcDir: 'app/',
   serverDir: 'server/',
 
-  modules: [
-    'vuetify-nuxt-module',
-  ],
+  modules: ['vuetify-nuxt-module', '@nuxt/eslint'],
 
   runtimeConfig: {
     mongodbUri: process.env.MONGODB_URI || 'mongodb://localhost:27017/lottozahlen',
@@ -32,20 +40,40 @@ export default defineNuxtConfig({
     },
   },
 
-  nitro: {
-    plugins: [
-      '~~/server/plugins/mongodb.ts',
-      '~~/server/plugins/cron.ts',
-    ],
+  routeRules: {
+    '/dashboard/**': { ssr: false },
+    '/login': { ssr: false },
+    '/register': { ssr: false },
+    '/forgot-password': { ssr: false },
+    '/verify-email': { ssr: false },
+    '/set-password': { ssr: false },
   },
 
-  css: [
-    '~/assets/styles/main.scss',
-    '@mdi/font/css/materialdesignicons.min.css',
-  ],
+  nitro: {
+    plugins: ['~~/server/plugins/mongodb.ts', '~~/server/plugins/cron.ts'],
+    externals: {
+      external: ['croner'],
+    },
+  },
+
+  css: ['~/assets/styles/main.scss', '@mdi/font/css/materialdesignicons.min.css'],
+
+  components: [{ path: '~/components/vue-bits', pathPrefix: false }, '~/components'],
 
   typescript: {
     strict: true,
+  },
+
+  vite: {
+    optimizeDeps: {
+      include: [
+        'dayjs',
+        'dayjs/plugin/relativeTime',
+        'dayjs/locale/de',
+        'better-auth/client/plugins',
+        'better-auth/vue',
+      ],
+    },
   },
 
   vuetify: {

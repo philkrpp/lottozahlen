@@ -1,7 +1,10 @@
 <template>
   <component
     :is="as"
-    :class="['relative inline-block overflow-hidden !bg-transparent !border-none !rounded-[20px]', customClass]"
+    :class="[
+      'relative inline-block overflow-hidden !bg-transparent !border-none !rounded-[20px]',
+      customClass,
+    ]"
     v-bind="restAttrs"
     :style="componentStyle"
   >
@@ -9,7 +12,7 @@
       class="absolute w-[300%] h-[50%] opacity-70 bottom-[-11px] right-[-250%] rounded-full animate-star-movement-bottom z-0"
       :style="{
         background: `radial-gradient(circle, ${color}, transparent 10%)`,
-        animationDuration: speed
+        animationDuration: speed,
       }"
     ></div>
 
@@ -17,7 +20,7 @@
       class="absolute w-[300%] h-[50%] opacity-70 top-[-10px] left-[-250%] rounded-full animate-star-movement-top z-0"
       :style="{
         background: `radial-gradient(circle, ${color}, transparent 10%)`,
-        animationDuration: speed
+        animationDuration: speed,
       }"
     ></div>
 
@@ -30,14 +33,14 @@
 </template>
 
 <script setup lang="ts">
-import { computed, defineProps, useAttrs } from 'vue';
+import { computed, defineProps, useAttrs } from 'vue'
 
 interface StarBorderProps {
-  as?: string;
-  customClass?: string;
-  color?: string;
-  speed?: string;
-  thickness?: number;
+  as?: string
+  customClass?: string
+  color?: string
+  speed?: string
+  thickness?: number
 }
 
 const props = withDefaults(defineProps<StarBorderProps>(), {
@@ -45,18 +48,18 @@ const props = withDefaults(defineProps<StarBorderProps>(), {
   customClass: '',
   color: 'white',
   speed: '6s',
-  thickness: 1
-});
+  thickness: 1,
+})
 
-const restAttrs = useAttrs();
+const restAttrs = useAttrs()
 
 const componentStyle = computed(() => {
   const base = {
-    padding: `${props.thickness}px 0`
-  };
-  const userStyle = (restAttrs.style as Record<string, string>) || {};
-  return { ...base, ...userStyle };
-});
+    padding: `${props.thickness}px 0`,
+  }
+  const userStyle = (restAttrs.style as Record<string, string>) || {}
+  return { ...base, ...userStyle }
+})
 </script>
 
 <style scoped>

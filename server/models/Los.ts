@@ -15,6 +15,7 @@ export interface ILos extends Document {
   displayName?: string
   isActive: boolean
   lastCheckedAt: Date | null
+  lastManualCheckAt: Date | null
   lastCheckResult: ILastCheckResult | null
   createdAt: Date
   updatedAt: Date
@@ -49,7 +50,7 @@ const LosSchema = new Schema<ILos>(
     },
     losTyp: {
       type: String,
-      enum: ['jahreslos', 'monatslos', 'mega-los', 'traumhauslos'],
+      enum: ['mega-los', 'jahreslos', 'dauerlos', 'einzellos'],
       required: true,
     },
     displayName: {
@@ -60,6 +61,10 @@ const LosSchema = new Schema<ILos>(
       default: true,
     },
     lastCheckedAt: {
+      type: Date,
+      default: null,
+    },
+    lastManualCheckAt: {
       type: Date,
       default: null,
     },

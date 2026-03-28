@@ -9,4 +9,5 @@ import { useAppTheme } from '~/composables/useAppTheme'
 
 // Initialize theme on app mount
 const { initTheme } = useAppTheme()
+initTheme()
 </script>

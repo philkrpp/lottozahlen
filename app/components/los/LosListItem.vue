@@ -1,13 +1,30 @@
 <template>
-  <v-list-item :title="losNummer" :subtitle="displayName || anbieterLabel" class="rounded-lg mb-2" border>
+  <v-list-item
+    :title="losNummer"
+    :subtitle="displayName || anbieterLabel"
+    class="rounded-lg mb-2"
+    border
+  >
     <template #prepend>
       <v-icon icon="mdi-ticket" color="primary" />
     </template>
     <template #append>
       <LosStatusChip :last-check-result="lastCheckResult" :is-active="isActive" class="mr-2" />
-      <v-btn icon="mdi-refresh" variant="text" size="small" :loading="isChecking === id" @click="$emit('quickCheck', id)" />
+      <v-btn
+        icon="mdi-refresh"
+        variant="text"
+        size="small"
+        :loading="isChecking === id"
+        @click="$emit('quickCheck', id)"
+      />
       <v-btn icon="mdi-pencil" variant="text" size="small" @click="$emit('edit', id)" />
-      <v-btn icon="mdi-delete" variant="text" size="small" color="error" @click="$emit('delete', id)" />
+      <v-btn
+        icon="mdi-delete"
+        variant="text"
+        size="small"
+        color="error"
+        @click="$emit('delete', id)"
+      />
     </template>
   </v-list-item>
 </template>

@@ -12,7 +12,9 @@
               <CountUp :from="0" :to="stat.value" :duration="1.5" />
             </div>
             <template #fallback>
-              <div class="text-h4 font-weight-bold" :class="`text-${stat.color}`">{{ stat.value }}</div>
+              <div class="text-h4 font-weight-bold" :class="`text-${stat.color}`">
+                {{ stat.value }}
+              </div>
             </template>
           </ClientOnly>
           <p class="text-caption mt-1" style="color: var(--v-theme-secondary)">{{ stat.title }}</p>
@@ -67,11 +69,7 @@
     </div>
 
     <!-- Add/Edit Dialog -->
-    <LosFormDialog
-      v-model="showAddDialog"
-      :edit-los="editingLos"
-      @submit="handleSubmit"
-    />
+    <LosFormDialog v-model="showAddDialog" :edit-los="editingLos" @submit="handleSubmit" />
 
     <!-- Delete Confirm -->
     <LosDeleteConfirm
@@ -84,7 +82,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
-import { useLos } from '~/composables/useLos'
+import { useLos, type Los } from '~/composables/useLos'
 import { useDraws } from '~/composables/useDraws'
 import LosOverviewCard from '~/components/dashboard/LosOverviewCard.vue'
 import LatestDrawResults from '~/components/dashboard/LatestDrawResults.vue'
@@ -98,20 +96,42 @@ definePageMeta({
   middleware: 'auth',
 })
 
-const { lose, activeLose, wonLose, isLoading, isChecking, isDeleting, fetchLose, createLos, updateLos, deleteLos, quickCheck } = useLos()
+const {
+  lose,
+  activeLose,
+  wonLose,
+  isLoading,
+  isChecking,
+  isDeleting,
+  fetchLose,
+  createLos,
+  updateLos,
+  deleteLos,
+  quickCheck,
+} = useLos()
 const { draws, fetchDraws } = useDraws()
 
 const showAddDialog = ref(false)
 const showDeleteDialog = ref(false)
-const editingLos = ref<any>(null)
+const editingLos = ref<Los | null>(null)
 const deletingLosId = ref<string | null>(null)
 
 const recentDraws = computed(() => draws.value.slice(0, 5))
 
 const statusCards = computed(() => [
   { title: 'Aktive Lose', value: activeLose.value.length, icon: 'mdi-ticket', color: 'primary' },
-  { title: 'Geprüft', value: lose.value.filter(l => l.lastCheckResult).length, icon: 'mdi-check-circle', color: 'success' },
-  { title: 'Ausstehend', value: activeLose.value.filter(l => !l.lastCheckResult).length, icon: 'mdi-clock-outline', color: 'warning' },
+  {
+    title: 'Geprüft',
+    value: lose.value.filter((l) => l.lastCheckResult).length,
+    icon: 'mdi-check-circle',
+    color: 'success',
+  },
+  {
+    title: 'Ausstehend',
+    value: activeLose.value.filter((l) => !l.lastCheckResult).length,
+    icon: 'mdi-clock-outline',
+    color: 'warning',
+  },
   { title: 'Gewinne', value: wonLose.value.length, icon: 'mdi-party-popper', color: 'accent' },
 ])
 
@@ -119,7 +139,7 @@ onMounted(async () => {
   await Promise.all([fetchLose(), fetchDraws({ limit: 5 })])
 })
 
-async function handleSubmit(data: { losNummer: string; anbieter: string; losTyp: string; displayName?: string }) {
+async function handleSubmit(data: { losNummer: string; anbieter: string; displayName?: string }) {
   if (editingLos.value) {
     await updateLos(editingLos.value._id, data)
   } else {
@@ -130,7 +150,7 @@ async function handleSubmit(data: { losNummer: string; anbieter: string; losTyp:
 }
 
 function handleEdit(id: string) {
-  editingLos.value = lose.value.find(l => l._id === id) || null
+  editingLos.value = lose.value.find((l) => l._id === id) || null
   showAddDialog.value = true
 }
 

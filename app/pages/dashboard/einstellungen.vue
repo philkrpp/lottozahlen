@@ -16,15 +16,9 @@
           variant="outlined"
           @update:model-value="handleThemeChange"
         >
-          <v-btn value="light" prepend-icon="mdi-white-balance-sunny">
-            Hell
-          </v-btn>
-          <v-btn value="system" prepend-icon="mdi-monitor">
-            System
-          </v-btn>
-          <v-btn value="dark" prepend-icon="mdi-moon-waning-crescent">
-            Dunkel
-          </v-btn>
+          <v-btn value="light" prepend-icon="mdi-white-balance-sunny"> Hell </v-btn>
+          <v-btn value="system" prepend-icon="mdi-monitor"> System </v-btn>
+          <v-btn value="dark" prepend-icon="mdi-moon-waning-crescent"> Dunkel </v-btn>
         </v-btn-toggle>
       </div>
     </v-card>
@@ -41,12 +35,8 @@
         variant="outlined"
         @update:model-value="updatePreference('dashboardLayout', $event as 'grid' | 'list')"
       >
-        <v-btn value="grid" prepend-icon="mdi-view-grid">
-          Kacheln
-        </v-btn>
-        <v-btn value="list" prepend-icon="mdi-view-list">
-          Liste
-        </v-btn>
+        <v-btn value="grid" prepend-icon="mdi-view-grid"> Kacheln </v-btn>
+        <v-btn value="list" prepend-icon="mdi-view-list"> Liste </v-btn>
       </v-btn-toggle>
     </v-card>
 
@@ -91,7 +81,11 @@
 
     <!-- Saving indicator -->
     <v-fade-transition>
-      <div v-if="isSavingPrefs" class="text-caption text-center" style="color: var(--v-theme-secondary)">
+      <div
+        v-if="isSavingPrefs"
+        class="text-caption text-center"
+        style="color: var(--v-theme-secondary)"
+      >
         <v-progress-circular size="12" width="2" indeterminate class="mr-1" />
         Wird gespeichert...
       </div>
@@ -127,7 +121,12 @@ definePageMeta({
 
 const { preferences, isSaving: isSavingPrefs, updatePreference } = useUserPreferences()
 const { setTheme } = useAppTheme()
-const { settings: notificationSettings, fetchSettings, updateSettings, sendTestNotification } = useNotifications()
+const {
+  settings: notificationSettings,
+  fetchSettings,
+  updateSettings,
+  sendTestNotification,
+} = useNotifications()
 const { signOut } = useAuth()
 const { error: toastError } = useToast()
 
@@ -150,11 +149,11 @@ onMounted(async () => {
   }
 })
 
-function handleThemeChange(mode: any) {
-  setTheme(mode as 'light' | 'dark' | 'system')
+function handleThemeChange(mode: 'light' | 'dark' | 'system') {
+  setTheme(mode)
 }
 
-function handleNotificationUpdate(data: Record<string, any>) {
+function handleNotificationUpdate(data: Record<string, string | boolean | null>) {
   updateSettings(data)
 }
 

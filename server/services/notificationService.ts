@@ -1,8 +1,12 @@
 import dayjs from 'dayjs'
-import { consola } from 'consola'
 import NotificationSetting from '~~/server/models/NotificationSetting'
 import { sendEmail, gewinnTemplate, keinGewinnTemplate, neueZiehungTemplate } from './emailService'
-import { sendSlackNotification, gewinnBlocks, keinGewinnBlocks, neueZiehungBlocks } from './slackService'
+import {
+  sendSlackNotification,
+  gewinnBlocks,
+  keinGewinnBlocks,
+  neueZiehungBlocks,
+} from './slackService'
 
 function formatDate(date: Date): string {
   return dayjs(date).format('DD.MM.YYYY')
@@ -74,9 +78,14 @@ export async function notifyUser(params: NotifyParams): Promise<boolean> {
 }
 
 export async function sendTestNotification(
-  settings: any,
+  settings: {
+    emailEnabled: boolean
+    emailAddress: string
+    slackEnabled: boolean
+    slackWebhookUrl: string | null
+  },
   type: 'email' | 'slack',
-  user: { email: string; name?: string },
+  _user: { email: string; name?: string },
 ): Promise<void> {
   if (type === 'email' && settings.emailEnabled && settings.emailAddress) {
     const html = gewinnTemplate('1234567', '1.000 €', formatDate(new Date()))

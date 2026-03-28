@@ -1,4 +1,4 @@
-import { auth } from '~~/server/utils/auth'
+import { getAuth } from '~~/server/utils/auth'
 
 export default defineEventHandler(async (event) => {
   const url = getRequestURL(event)
@@ -13,7 +13,7 @@ export default defineEventHandler(async (event) => {
     return
   }
 
-  const session = await auth.api.getSession({ headers: event.headers })
+  const session = await getAuth().api.getSession({ headers: event.headers })
 
   if (!session) {
     throw createError({ statusCode: 401, message: 'Nicht authentifiziert' })

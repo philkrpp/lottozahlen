@@ -17,7 +17,7 @@ export default defineEventHandler(async (event) => {
   const prefs = await UserPreference.findOneAndUpdate(
     { userId },
     { $set: data },
-    { new: true, upsert: true },
+    { returnDocument: 'after', upsert: true },
   )
   return prefs
 })

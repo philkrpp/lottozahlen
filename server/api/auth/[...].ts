@@ -1,5 +1,5 @@
-import { auth } from '~~/server/utils/auth'
+import { getAuth } from '~~/server/utils/auth'
 
 export default defineEventHandler((event) => {
-  return auth.handler(toWebRequest(event))
+  return getAuth().handler(toWebRequest(event))
 })

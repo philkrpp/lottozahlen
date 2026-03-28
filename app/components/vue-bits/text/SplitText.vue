@@ -5,27 +5,27 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch, type CSSProperties, onBeforeUnmount, computed } from 'vue';
-import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { SplitText as GSAPSplitText } from 'gsap/SplitText';
+import { ref, onMounted, watch, type CSSProperties, onBeforeUnmount, computed } from 'vue'
+import { gsap } from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { SplitText as GSAPSplitText } from 'gsap/SplitText'
 
-gsap.registerPlugin(ScrollTrigger, GSAPSplitText);
+gsap.registerPlugin(ScrollTrigger, GSAPSplitText)
 
 export interface SplitTextProps {
-  text: string;
-  className?: string;
-  delay?: number;
-  duration?: number;
-  ease?: string | ((t: number) => number);
-  splitType?: 'chars' | 'words' | 'lines';
-  from?: gsap.TweenVars;
-  to?: gsap.TweenVars;
-  threshold?: number;
-  rootMargin?: string;
-  tag?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'p' | 'span';
-  textAlign?: CSSProperties['textAlign'];
-  onLetterAnimationComplete?: () => void;
+  text: string
+  className?: string
+  delay?: number
+  duration?: number
+  ease?: string | ((t: number) => number)
+  splitType?: 'chars' | 'words' | 'lines'
+  from?: gsap.TweenVars
+  to?: gsap.TweenVars
+  threshold?: number
+  rootMargin?: string
+  tag?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'p' | 'span'
+  textAlign?: CSSProperties['textAlign']
+  onLetterAnimationComplete?: () => void
 }
 
 const props = withDefaults(defineProps<SplitTextProps>(), {
@@ -39,67 +39,70 @@ const props = withDefaults(defineProps<SplitTextProps>(), {
   threshold: 0.1,
   rootMargin: '-100px',
   tag: 'p',
-  textAlign: 'center'
-});
+  textAlign: 'center',
+  onLetterAnimationComplete: undefined,
+})
 
 const emit = defineEmits<{
-  'animation-complete': [];
-}>();
+  'animation-complete': []
+}>()
 
-const elRef = ref<HTMLElement | null>(null);
-const fontsLoaded = ref(false);
-const animationCompleted = ref(false);
+const elRef = ref<HTMLElement | null>(null)
+const fontsLoaded = ref(false)
+const animationCompleted = ref(false)
 
-let splitInstance: GSAPSplitText | null = null;
+let splitInstance: GSAPSplitText | null = null
 
 onMounted(() => {
   if (document.fonts.status === 'loaded') {
-    fontsLoaded.value = true;
+    fontsLoaded.value = true
   } else {
     document.fonts.ready.then(() => {
-      fontsLoaded.value = true;
-    });
+      fontsLoaded.value = true
+    })
   }
-});
+})
 
 const runAnimation = () => {
-  if (!elRef.value || !props.text || !fontsLoaded.value) return;
-  if (animationCompleted.value) return;
+  if (!elRef.value || !props.text || !fontsLoaded.value) return
+  if (animationCompleted.value) return
 
   const el = elRef.value as HTMLElement & {
-    _rbsplitInstance?: GSAPSplitText;
-  };
+    _rbsplitInstance?: GSAPSplitText
+  }
 
   // cleanup previous
   if (el._rbsplitInstance) {
     try {
-      el._rbsplitInstance.revert();
-    } catch {}
-    el._rbsplitInstance = undefined;
+      el._rbsplitInstance.revert()
+    } catch { /* ignored */ }
+    el._rbsplitInstance = undefined
   }
 
-  const startPct = (1 - props.threshold) * 100;
-  const marginMatch = /^(-?\d+(?:\.\d+)?)(px|em|rem|%)?$/.exec(props.rootMargin);
-  const marginValue = marginMatch ? parseFloat(marginMatch[1]) : 0;
-  const marginUnit = marginMatch?.[2] || 'px';
+  const startPct = (1 - props.threshold) * 100
+  const marginMatch = /^(-?\d+(?:\.\d+)?)(px|em|rem|%)?$/.exec(props.rootMargin)
+  const marginValue = marginMatch ? parseFloat(marginMatch[1]) : 0
+  const marginUnit = marginMatch?.[2] || 'px'
 
   const sign =
     marginValue === 0
       ? ''
       : marginValue < 0
         ? `-=${Math.abs(marginValue)}${marginUnit}`
-        : `+=${marginValue}${marginUnit}`;
+        : `+=${marginValue}${marginUnit}`
 
-  const start = `top ${startPct}%${sign}`;
+  const start = `top ${startPct}%${sign}`
 
-  let targets: Element[] = [];
+  let targets: Element[] = []
 
   const assignTargets = (self: GSAPSplitText) => {
-    if (props.splitType.includes('chars') && self.chars?.length) targets = self.chars;
-    if (!targets.length && props.splitType.includes('words') && self.words?.length) targets = self.words;
-    if (!targets.length && props.splitType.includes('lines') && self.lines?.length) targets = self.lines;
-    if (!targets.length) targets = self.chars || self.words || self.lines;
-  };
+    if (props.splitType.includes('chars') && self.chars?.length) targets = self.chars
+    if (!targets.length && props.splitType.includes('words') && self.words?.length)
+      targets = self.words
+    if (!targets.length && props.splitType.includes('lines') && self.lines?.length)
+      targets = self.lines
+    if (!targets.length) targets = self.chars || self.words || self.lines
+  }
 
   splitInstance = new GSAPSplitText(el, {
     type: props.splitType,
@@ -110,7 +113,7 @@ const runAnimation = () => {
     charsClass: 'split-char',
     reduceWhiteSpace: false,
     onSplit(self) {
-      assignTargets(self);
+      assignTargets(self)
 
       return gsap.fromTo(
         targets,
@@ -125,22 +128,22 @@ const runAnimation = () => {
             start,
             once: true,
             fastScrollEnd: true,
-            anticipatePin: 0.4
+            anticipatePin: 0.4,
           },
           onComplete() {
-            animationCompleted.value = true;
-            props.onLetterAnimationComplete?.();
-            emit('animation-complete');
+            animationCompleted.value = true
+            props.onLetterAnimationComplete?.()
+            emit('animation-complete')
           },
           willChange: 'transform, opacity',
-          force3D: true
-        }
-      );
-    }
-  });
+          force3D: true,
+        },
+      )
+    },
+  })
 
-  el._rbsplitInstance = splitInstance;
-};
+  el._rbsplitInstance = splitInstance
+}
 
 watch(
   () => [
@@ -153,27 +156,29 @@ watch(
     JSON.stringify(props.to),
     props.threshold,
     props.rootMargin,
-    fontsLoaded.value
+    fontsLoaded.value,
   ],
   runAnimation,
-  { deep: true }
-);
+  { deep: true },
+)
 
 onBeforeUnmount(() => {
-  ScrollTrigger.getAll().forEach(st => {
-    if (st.trigger === elRef.value) st.kill();
-  });
+  ScrollTrigger.getAll().forEach((st) => {
+    if (st.trigger === elRef.value) st.kill()
+  })
 
   try {
-    splitInstance?.revert();
-  } catch {}
-});
+    splitInstance?.revert()
+  } catch { /* ignored */ }
+})
 
 const styles = computed(() => ({
   textAlign: props.textAlign,
   wordWrap: 'break-word',
-  willChange: 'transform, opacity'
-}));
+  willChange: 'transform, opacity',
+}))
 
-const classes = computed(() => `split-parent overflow-hidden inline-block whitespace-normal ${props.className}`);
+const classes = computed(
+  () => `split-parent overflow-hidden inline-block whitespace-normal ${props.className}`,
+)
 </script>

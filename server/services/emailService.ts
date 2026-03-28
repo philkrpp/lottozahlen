@@ -50,7 +50,7 @@ function baseTemplate(content: string): string {
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    body { font-family: 'Plus Jakarta Sans', -apple-system, sans-serif; margin: 0; padding: 0; background: #FAFBFC; }
+    body { font-family: 'Sora', -apple-system, sans-serif; margin: 0; padding: 0; background: #FAFBFC; }
     .container { max-width: 600px; margin: 0 auto; padding: 40px 20px; }
     .card { background: white; border-radius: 16px; padding: 40px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
     .header { text-align: center; margin-bottom: 32px; }
@@ -98,6 +98,29 @@ export function neueZiehungTemplate(anbieter: string, drawDate: string): string 
     <p>Es gibt neue Ziehungsergebnisse fuer <strong>${anbieter}</strong> vom <strong>${drawDate}</strong>.</p>
     <p>Schau dir die Ergebnisse in deinem Dashboard an!</p>
     <p style="text-align:center;"><a href="${process.env.NUXT_PUBLIC_APP_URL || 'http://localhost:3000'}/dashboard/ziehungen" class="btn">Ergebnisse ansehen</a></p>
+  `)
+}
+
+export function verificationOtpTemplate(otp: string): string {
+  return baseTemplate(`
+    <h2 style="text-align:center;">E-Mail best&auml;tigen</h2>
+    <p>Verwende den folgenden Code, um deine E-Mail-Adresse zu best&auml;tigen:</p>
+    <div style="text-align:center; margin: 24px 0;">
+      <span style="font-family: monospace; font-size: 32px; font-weight: 700; letter-spacing: 0.3em; background: #F1F5F9; padding: 16px 32px; border-radius: 12px; display: inline-block; color: #0F172A;">${otp}</span>
+    </div>
+    <p style="text-align:center; color: #64748B; font-size: 14px;">Der Code ist <strong>5 Minuten</strong> g&uuml;ltig.</p>
+    <p style="text-align:center; color: #64748B; font-size: 13px;">Falls du dich nicht registriert hast, ignoriere diese E-Mail.</p>
+  `)
+}
+
+export function magicLinkTemplate(url: string): string {
+  return baseTemplate(`
+    <h2 style="text-align:center;">Passwort zur&uuml;cksetzen</h2>
+    <p>Du hast eine Anfrage zum Zur&uuml;cksetzen deines Passworts gestellt. Klicke auf den Button, um ein neues Passwort zu setzen:</p>
+    <p style="text-align:center;"><a href="${url}" class="btn">Neues Passwort setzen</a></p>
+    <p style="color: #64748B; font-size: 13px; word-break: break-all;">Falls der Button nicht funktioniert, kopiere diesen Link in deinen Browser:<br>${url}</p>
+    <p style="text-align:center; color: #64748B; font-size: 14px;">Der Link ist <strong>10 Minuten</strong> g&uuml;ltig.</p>
+    <p style="text-align:center; color: #64748B; font-size: 13px;">Falls du diese Anfrage nicht gestellt hast, ignoriere diese E-Mail.</p>
   `)
 }
 

@@ -10,12 +10,18 @@ const systemPrefersDark = ref(false)
 export function useAppTheme() {
   const { preferences, updatePreference } = useUserPreferences()
 
+  // Call useTheme() once during setup context so inject() works
+  let vuetifyTheme: ReturnType<typeof useVuetifyTheme> | null = null
+  try {
+    vuetifyTheme = useVuetifyTheme()
+  } catch { /* ignored */ }
+
   const isDark = computed(() => {
     if (themeMode.value === 'system') return systemPrefersDark.value
     return themeMode.value === 'dark'
   })
 
-  const resolvedTheme = computed<'light' | 'dark'>(() => isDark.value ? 'dark' : 'light')
+  const resolvedTheme = computed<'light' | 'dark'>(() => (isDark.value ? 'dark' : 'light'))
 
   // Vue Bits theme-aware colors
   const vueBitsColors = computed(() => ({
@@ -28,12 +34,9 @@ export function useAppTheme() {
   }))
 
   function applyTheme() {
-    try {
-      const vuetifyTheme = useVuetifyTheme()
-      if (vuetifyTheme) {
-        vuetifyTheme.global.name.value = resolvedTheme.value
-      }
-    } catch {}
+    if (vuetifyTheme) {
+      vuetifyTheme.change(resolvedTheme.value)
+    }
   }
 
   function setTheme(mode: ThemeMode) {
@@ -57,7 +60,7 @@ export function useAppTheme() {
         if (stored && ['light', 'dark', 'system'].includes(stored)) {
           themeMode.value = stored as ThemeMode
         }
-      } catch {}
+      } catch { /* ignored */ }
     }
 
     // Listen for system preference changes
@@ -77,12 +80,15 @@ export function useAppTheme() {
   }
 
   // Watch for preference changes
-  watch(() => preferences.value.theme, (newTheme) => {
-    if (newTheme && newTheme !== themeMode.value) {
-      themeMode.value = newTheme
-      applyTheme()
-    }
-  })
+  watch(
+    () => preferences.value.theme,
+    (newTheme) => {
+      if (newTheme && newTheme !== themeMode.value) {
+        themeMode.value = newTheme
+        applyTheme()
+      }
+    },
+  )
 
   // Watch resolved theme to apply
   watch(resolvedTheme, () => {

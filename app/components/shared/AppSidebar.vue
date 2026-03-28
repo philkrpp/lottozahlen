@@ -50,11 +50,7 @@
 
   <!-- Mobile Bottom Navigation -->
   <v-bottom-navigation v-else grow>
-    <v-btn
-      v-for="item in navItems"
-      :key="item.to"
-      :to="item.to"
-    >
+    <v-btn v-for="item in navItems" :key="item.to" :to="item.to">
       <v-icon>{{ item.icon }}</v-icon>
       <span class="text-caption">{{ item.shortTitle || item.title }}</span>
     </v-btn>
@@ -69,19 +65,29 @@ import ThemeToggle from './ThemeToggle.vue'
 
 const { mobile } = useDisplay()
 const { useSession, signOut } = useAuth()
-const { data: session } = useSession()
+const session = useSession()
 
-const user = computed(() => session.value?.user)
+const user = computed(() => session.value?.data?.user)
 const userInitials = computed(() => {
   const name = user.value?.name || user.value?.email || ''
-  return name.split(' ').map((n: string) => n[0]).join('').toUpperCase().slice(0, 2)
+  return name
+    .split(' ')
+    .map((n: string) => n[0])
+    .join('')
+    .toUpperCase()
+    .slice(0, 2)
 })
 
 const navItems = [
   { title: 'Dashboard', shortTitle: 'Home', icon: 'mdi-view-dashboard', to: '/dashboard' },
   { title: 'Meine Lose', shortTitle: 'Lose', icon: 'mdi-ticket', to: '/dashboard/lose' },
   { title: 'Ziehungen', shortTitle: 'Ziehungen', icon: 'mdi-history', to: '/dashboard/ziehungen' },
-  { title: 'Einstellungen', shortTitle: 'Settings', icon: 'mdi-cog', to: '/dashboard/einstellungen' },
+  {
+    title: 'Einstellungen',
+    shortTitle: 'Settings',
+    icon: 'mdi-cog',
+    to: '/dashboard/einstellungen',
+  },
 ]
 
 async function handleLogout() {

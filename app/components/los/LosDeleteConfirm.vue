@@ -14,12 +14,15 @@
 <script setup lang="ts">
 import ConfirmDialog from '~/components/shared/ConfirmDialog.vue'
 
-withDefaults(defineProps<{
-  modelValue: boolean
-  loading?: boolean
-}>(), {
-  loading: false,
-})
+withDefaults(
+  defineProps<{
+    modelValue: boolean
+    loading?: boolean
+  }>(),
+  {
+    loading: false,
+  },
+)
 
 defineEmits<{
   'update:modelValue': [value: boolean]

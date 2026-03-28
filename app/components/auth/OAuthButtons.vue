@@ -1,36 +1,49 @@
 <template>
-  <div>
+  <div v-if="hasAnyProvider">
     <v-btn
+      v-if="providers?.google"
       block
       variant="outlined"
       size="large"
       class="mb-3"
       prepend-icon="mdi-google"
-      @click="signInWithGoogle"
       :loading="loadingGoogle"
+      @click="signInWithGoogle"
     >
       Weiter mit Google
     </v-btn>
     <v-btn
+      v-if="providers?.github"
       block
       variant="outlined"
       size="large"
+      :class="{ 'mb-3': !providers?.google }"
       prepend-icon="mdi-github"
-      @click="signInWithGitHub"
       :loading="loadingGithub"
+      @click="signInWithGitHub"
     >
       Weiter mit GitHub
     </v-btn>
+
+    <div class="d-flex align-center my-6">
+      <v-divider />
+      <span class="mx-4 text-body-2" style="color: var(--v-theme-secondary)">oder</span>
+      <v-divider />
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { useAuth } from '~/composables/useAuth'
 
 const { signIn } = useAuth()
 const loadingGoogle = ref(false)
 const loadingGithub = ref(false)
+
+const { data: providers } = useFetch<{ google: boolean; github: boolean }>('/api/auth/providers')
+
+const hasAnyProvider = computed(() => providers.value?.google || providers.value?.github)
 
 async function signInWithGoogle() {
   loadingGoogle.value = true

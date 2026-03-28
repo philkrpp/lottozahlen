@@ -1,9 +1,9 @@
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
 import { useToast } from './useToast'
 
 interface DrawResults {
   winningNumbers: string[]
-  additionalData: any
+  additionalData: Record<string, unknown>
 }
 
 interface Draw {
@@ -47,7 +47,7 @@ export function useDraws() {
       total.value = data.total
       currentPage.value = data.page
       totalPages.value = data.totalPages
-    } catch (e) {
+    } catch {
       error('Ziehungen konnten nicht geladen werden')
     } finally {
       isLoading.value = false
@@ -60,7 +60,7 @@ export function useDraws() {
         query: anbieter ? { anbieter } : undefined,
       })
       latestDraw.value = data
-    } catch (e) {
+    } catch {
       // Silent fail for latest draw
     }
   }

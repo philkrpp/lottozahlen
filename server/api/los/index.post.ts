@@ -1,10 +1,10 @@
 import { z } from 'zod'
 import Los from '~~/server/models/Los'
+import { detectLosTypFromNummer } from '~~/server/utils/losTypDetector'
 
 const createLosSchema = z.object({
-  losNummer: z.string().regex(/^\d{7}$/, 'Losnummer muss 7 Ziffern haben'),
+  losNummer: z.string().regex(/^\d{7,12}$/, 'Losnummer muss 7-12 Ziffern haben'),
   anbieter: z.enum(['deutsche-fernsehlotterie']),
-  losTyp: z.enum(['jahreslos', 'monatslos', 'mega-los', 'traumhauslos']),
   displayName: z.string().max(50).optional(),
 })
 
@@ -13,6 +13,16 @@ export default defineEventHandler(async (event) => {
   const body = await readBody(event)
   const data = createLosSchema.parse(body)
 
-  const los = await Los.create({ ...data, userId })
+  let losTyp: string
+  try {
+    losTyp = detectLosTypFromNummer(data.losNummer)
+  } catch {
+    throw createError({
+      statusCode: 422,
+      message: 'Los-Typ konnte nicht erkannt werden. Bitte prüfe die Losnummer.',
+    })
+  }
+
+  const los = await Los.create({ ...data, losTyp, userId })
   return los
 })

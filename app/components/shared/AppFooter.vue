@@ -11,8 +11,12 @@
         <v-col cols="6" md="4">
           <p class="text-subtitle-2 font-weight-bold mb-2">Links</p>
           <div class="d-flex flex-column">
-            <NuxtLink to="/impressum" class="text-body-2 text-decoration-none mb-1">Impressum</NuxtLink>
-            <NuxtLink to="/datenschutz" class="text-body-2 text-decoration-none mb-1">Datenschutz</NuxtLink>
+            <NuxtLink to="/impressum" class="text-body-2 text-decoration-none mb-1"
+              >Impressum</NuxtLink
+            >
+            <NuxtLink to="/datenschutz" class="text-body-2 text-decoration-none mb-1"
+              >Datenschutz</NuxtLink
+            >
           </div>
         </v-col>
         <v-col cols="6" md="4">
@@ -31,5 +35,4 @@
   </v-footer>
 </template>
 
-<script setup lang="ts">
-</script>
+<script setup lang="ts"></script>

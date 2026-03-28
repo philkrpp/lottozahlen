@@ -1,8 +1,11 @@
 <template>
-  <section class="hero-section d-flex align-center" style="min-height: 100vh; position: relative; overflow: hidden;">
+  <section
+    class="hero-section d-flex align-center"
+    style="min-height: 100vh; position: relative; overflow: hidden"
+  >
     <!-- Aurora Background -->
     <ClientOnly>
-      <div style="position: absolute; inset: 0; z-index: 0;">
+      <div style="position: absolute; inset: 0; z-index: 0; pointer-events: none">
         <Aurora
           :color-stops="vueBitsColors.auroraColors"
           :blend="0.5"
@@ -12,7 +15,7 @@
       </div>
     </ClientOnly>
 
-    <v-container style="position: relative; z-index: 1;" class="text-center">
+    <v-container style="position: relative; z-index: 1" class="text-center">
       <ClientOnly>
         <SplitText
           text="Deine Losnummern. Automatisch geprüft."
@@ -44,7 +47,14 @@
         <v-btn color="primary" size="large" rounded="lg" to="/register" min-width="220">
           Kostenlos registrieren
         </v-btn>
-        <v-btn variant="outlined" color="primary" size="large" rounded="lg" @click="scrollToFeatures" min-width="180">
+        <v-btn
+          variant="outlined"
+          color="primary"
+          size="large"
+          rounded="lg"
+          min-width="180"
+          @click="scrollToFeatures"
+        >
           Mehr erfahren
         </v-btn>
       </div>
@@ -84,7 +94,7 @@ function scrollToFeatures() {
 
 <style scoped>
 .hero-headline {
-  font-family: 'Outfit', sans-serif;
+  font-family: 'Sora', sans-serif;
   font-weight: 800;
   font-size: clamp(2rem, 5vw, 4rem);
   line-height: 1.1;

@@ -17,18 +17,21 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 
-const props = withDefaults(defineProps<{
-  modelValue: boolean
-  title: string
-  message: string
-  confirmText?: string
-  confirmColor?: string
-  loading?: boolean
-}>(), {
-  confirmText: 'Bestätigen',
-  confirmColor: 'error',
-  loading: false,
-})
+const props = withDefaults(
+  defineProps<{
+    modelValue: boolean
+    title: string
+    message: string
+    confirmText?: string
+    confirmColor?: string
+    loading?: boolean
+  }>(),
+  {
+    confirmText: 'Bestätigen',
+    confirmColor: 'error',
+    loading: false,
+  },
+)
 
 const emit = defineEmits<{
   'update:modelValue': [value: boolean]

@@ -1,4 +1,4 @@
-import { ref, watch, computed } from 'vue'
+import { ref, computed } from 'vue'
 import { useToast } from './useToast'
 
 interface UserPreferences {
@@ -24,6 +24,8 @@ const lastSaved = ref<Date | null>(null)
 let debounceTimer: ReturnType<typeof setTimeout> | null = null
 let pendingChanges: Partial<UserPreferences> = {}
 
+let isAuthenticated = false
+
 export function useUserPreferences() {
   const { success, error } = useToast()
 
@@ -33,14 +35,16 @@ export function useUserPreferences() {
       if (data) {
         preferences.value = { ...preferences.value, ...data }
       }
+      isAuthenticated = true
       isLoaded.value = true
-    } catch (e) {
+    } catch {
+      isAuthenticated = false
       // Fallback to localStorage for non-authenticated users
       const stored = localStorage.getItem('lottozahlen-preferences')
       if (stored) {
         try {
           preferences.value = { ...preferences.value, ...JSON.parse(stored) }
-        } catch {}
+        } catch { /* ignored */ }
       }
       isLoaded.value = true
     }
@@ -58,7 +62,7 @@ export function useUserPreferences() {
       }
       lastSaved.value = new Date()
       success('Gespeichert')
-    } catch (e) {
+    } catch {
       error('Speichern fehlgeschlagen')
       // Revert optimistic update would go here
     } finally {
@@ -69,25 +73,27 @@ export function useUserPreferences() {
   function saveToLocalStorage() {
     try {
       localStorage.setItem('lottozahlen-preferences', JSON.stringify(preferences.value))
-    } catch {}
+    } catch { /* ignored */ }
   }
 
   function updatePreference<K extends keyof UserPreferences>(key: K, value: UserPreferences[K]) {
     // Optimistic update
     preferences.value[key] = value
 
-    // Save to localStorage as fallback
+    // Save to localStorage
     saveToLocalStorage()
 
-    // Debounced server save
-    pendingChanges[key] = value as any
+    // Debounced server save only for authenticated users
+    if (isAuthenticated) {
+      Object.assign(pendingChanges, { [key]: value })
 
-    if (debounceTimer) clearTimeout(debounceTimer)
-    debounceTimer = setTimeout(() => {
-      const changes = { ...pendingChanges }
-      pendingChanges = {}
-      saveToServer(changes)
-    }, 500)
+      if (debounceTimer) clearTimeout(debounceTimer)
+      debounceTimer = setTimeout(() => {
+        const changes = { ...pendingChanges }
+        pendingChanges = {}
+        saveToServer(changes)
+      }, 500)
+    }
   }
 
   function updatePreferences(partial: Partial<UserPreferences>) {
@@ -97,15 +103,17 @@ export function useUserPreferences() {
     // Save to localStorage
     saveToLocalStorage()
 
-    // Debounced server save
-    Object.assign(pendingChanges, partial)
+    // Debounced server save only for authenticated users
+    if (isAuthenticated) {
+      Object.assign(pendingChanges, partial)
 
-    if (debounceTimer) clearTimeout(debounceTimer)
-    debounceTimer = setTimeout(() => {
-      const changes = { ...pendingChanges }
-      pendingChanges = {}
-      saveToServer(changes)
-    }, 500)
+      if (debounceTimer) clearTimeout(debounceTimer)
+      debounceTimer = setTimeout(() => {
+        const changes = { ...pendingChanges }
+        pendingChanges = {}
+        saveToServer(changes)
+      }, 500)
+    }
   }
 
   return {

@@ -7,7 +7,7 @@ export default defineEventHandler(async (event) => {
   const los = await Los.findOneAndUpdate(
     { _id: losId, userId },
     { $set: { isActive: false } },
-    { new: true },
+    { returnDocument: 'after' },
   )
 
   if (!los) {

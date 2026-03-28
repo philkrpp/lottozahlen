@@ -53,4 +53,5 @@ const NotificationSettingSchema = new Schema<INotificationSetting>(
   { timestamps: true },
 )
 
-export default mongoose.models.NotificationSetting || mongoose.model<INotificationSetting>('NotificationSetting', NotificationSettingSchema)
+export default mongoose.models.NotificationSetting ||
+  mongoose.model<INotificationSetting>('NotificationSetting', NotificationSettingSchema)

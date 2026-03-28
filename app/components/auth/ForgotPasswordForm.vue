@@ -2,7 +2,7 @@
   <div>
     <h2 class="text-h5 font-weight-bold text-center mb-2">Passwort vergessen?</h2>
     <p class="text-body-2 text-center mb-6" style="color: var(--v-theme-secondary)">
-      Gib deine E-Mail-Adresse ein und wir senden dir einen Link zum Zurücksetzen.
+      Gib deine E-Mail-Adresse ein und wir senden dir einen magischen Link zum Zurücksetzen.
     </p>
 
     <v-form v-if="!sent" @submit.prevent="handleReset">
@@ -28,9 +28,7 @@
     </v-alert>
 
     <p class="text-center text-body-2 mt-6">
-      <NuxtLink to="/login" class="text-primary text-decoration-none">
-        Zurück zum Login
-      </NuxtLink>
+      <NuxtLink to="/login" class="text-primary text-decoration-none"> Zurück zum Login </NuxtLink>
     </p>
   </div>
 </template>
@@ -39,7 +37,7 @@
 import { ref } from 'vue'
 import { useAuth } from '~/composables/useAuth'
 
-const { forgetPassword } = useAuth()
+const { signIn } = useAuth()
 
 const email = ref('')
 const loading = ref(false)
@@ -50,13 +48,16 @@ const errors = ref<Record<string, string>>({})
 async function handleReset() {
   errors.value = {}
   errorMsg.value = ''
-  if (!email.value) { errors.value.email = 'E-Mail ist erforderlich'; return }
+  if (!email.value) {
+    errors.value.email = 'E-Mail ist erforderlich'
+    return
+  }
 
   loading.value = true
   try {
-    await forgetPassword({ email: email.value, redirectTo: '/reset-password' })
+    await signIn.magicLink({ email: email.value, callbackURL: '/set-password' })
     sent.value = true
-  } catch (e) {
+  } catch {
     // Always show success to prevent email enumeration
     sent.value = true
   } finally {

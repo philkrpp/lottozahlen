@@ -19,24 +19,13 @@
             class="mb-2"
           />
 
-          <v-select
-            v-model="form.losTyp"
-            label="Los-Typ"
-            :items="losTypItems"
-            item-title="label"
-            item-value="value"
-            prepend-inner-icon="mdi-ticket"
-            :disabled="!form.anbieter"
-            class="mb-2"
-          />
-
           <v-text-field
             v-model="form.losNummer"
             label="Losnummer"
             prepend-inner-icon="mdi-numeric"
-            placeholder="1234567"
-            :rules="[v => /^\d{7}$/.test(v) || 'Losnummer muss 7 Ziffern haben']"
-            maxlength="7"
+            placeholder="z.B. 8294012 oder 829401234567"
+            :rules="[(v) => /^\d{7,12}$/.test(v) || 'Losnummer muss 7-12 Ziffern haben']"
+            maxlength="12"
             class="mb-2"
           />
 
@@ -80,7 +69,7 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   'update:modelValue': [value: boolean]
-  submit: [data: { losNummer: string; anbieter: string; losTyp: string; displayName?: string }]
+  submit: [data: { losNummer: string; anbieter: string; displayName?: string }]
 }>()
 
 const { mobile } = useDisplay()
@@ -88,7 +77,6 @@ const loading = ref(false)
 
 const form = ref({
   anbieter: 'deutsche-fernsehlotterie',
-  losTyp: '',
   losNummer: '',
   displayName: '',
 })
@@ -101,43 +89,47 @@ const dialogModel = computed({
 })
 
 const anbieterItems = computed(() =>
-  Object.values(ANBIETER).map(a => ({ name: a.name, slug: a.slug }))
+  Object.values(ANBIETER).map((a) => ({ name: a.name, slug: a.slug })),
 )
 
-const losTypItems = computed(() => {
-  const a = ANBIETER[form.value.anbieter as keyof typeof ANBIETER]
-  return a?.losTypen || []
-})
-
-watch(() => props.editLos, (los) => {
-  if (los) {
-    form.value = {
-      anbieter: los.anbieter,
-      losTyp: los.losTyp,
-      losNummer: los.losNummer,
-      displayName: los.displayName || '',
+watch(
+  () => props.editLos,
+  (los) => {
+    if (los) {
+      form.value = {
+        anbieter: los.anbieter,
+        losNummer: los.losNummer,
+        displayName: los.displayName || '',
+      }
     }
-  }
-}, { immediate: true })
+  },
+  { immediate: true },
+)
 
-watch(() => props.modelValue, (open) => {
-  if (open && !props.editLos) {
-    form.value = { anbieter: 'deutsche-fernsehlotterie', losTyp: '', losNummer: '', displayName: '' }
-  }
-})
+watch(
+  () => props.modelValue,
+  (open) => {
+    if (open && !props.editLos) {
+      form.value = {
+        anbieter: 'deutsche-fernsehlotterie',
+        losNummer: '',
+        displayName: '',
+      }
+    }
+  },
+)
 
 function close() {
   emit('update:modelValue', false)
 }
 
 function handleSubmit() {
-  if (!/^\d{7}$/.test(form.value.losNummer)) return
-  if (!form.value.anbieter || !form.value.losTyp) return
+  if (!/^\d{7,12}$/.test(form.value.losNummer)) return
+  if (!form.value.anbieter) return
 
   emit('submit', {
     losNummer: form.value.losNummer,
     anbieter: form.value.anbieter,
-    losTyp: form.value.losTyp,
     displayName: form.value.displayName || undefined,
   })
 }

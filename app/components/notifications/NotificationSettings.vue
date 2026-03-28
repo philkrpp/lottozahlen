@@ -73,7 +73,13 @@
       <v-btn variant="outlined" size="small" prepend-icon="mdi-email" @click="$emit('testEmail')">
         Test E-Mail
       </v-btn>
-      <v-btn variant="outlined" size="small" prepend-icon="mdi-slack" :disabled="!slackEnabled" @click="$emit('testSlack')">
+      <v-btn
+        variant="outlined"
+        size="small"
+        prepend-icon="mdi-slack"
+        :disabled="!slackEnabled"
+        @click="$emit('testSlack')"
+      >
         Test Slack
       </v-btn>
     </div>
@@ -96,7 +102,7 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits<{
-  update: [data: Record<string, any>]
+  update: [data: Record<string, string | boolean | null>]
   testEmail: []
   testSlack: []
 }>()
@@ -111,24 +117,38 @@ const notifyOnNewDraw = ref(true)
 
 let debounceTimer: ReturnType<typeof setTimeout> | null = null
 
-watch(() => props.settings, (s) => {
-  if (s) {
-    emailEnabled.value = s.emailEnabled
-    emailAddress.value = s.emailAddress || ''
-    slackEnabled.value = s.slackEnabled
-    slackWebhookUrl.value = s.slackWebhookUrl || ''
-    notifyOnWin.value = s.notifyOnWin
-    notifyOnNoWin.value = s.notifyOnNoWin
-    notifyOnNewDraw.value = s.notifyOnNewDraw
-  }
-}, { immediate: true })
+watch(
+  () => props.settings,
+  (s) => {
+    if (s) {
+      emailEnabled.value = s.emailEnabled
+      emailAddress.value = s.emailAddress || ''
+      slackEnabled.value = s.slackEnabled
+      slackWebhookUrl.value = s.slackWebhookUrl || ''
+      notifyOnWin.value = s.notifyOnWin
+      notifyOnNoWin.value = s.notifyOnNoWin
+      notifyOnNewDraw.value = s.notifyOnNewDraw
+    }
+  },
+  { immediate: true },
+)
 
-function save(data: Record<string, any>) {
+function save(data: Record<string, string | boolean | null>) {
   emit('update', data)
 }
 
-function debouncedSave(data: Record<string, any>) {
+function debouncedSave(data: Record<string, string | boolean | null>) {
   if (debounceTimer) clearTimeout(debounceTimer)
   debounceTimer = setTimeout(() => save(data), 500)
 }
 </script>
+
+<style scoped>
+:deep(.v-switch .v-switch__track) {
+  background-color: #9e9e9e;
+  opacity: 1;
+}
+:deep(.v-switch .v-selection-control--dirty .v-switch__track) {
+  background-color: rgb(var(--v-theme-primary));
+}
+</style>

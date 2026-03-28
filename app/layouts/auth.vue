@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <v-main class="d-flex align-center justify-center" style="min-height: 100vh;">
+    <v-main class="d-flex align-center justify-center" style="min-height: 100vh">
       <v-container class="d-flex justify-center">
         <v-card class="pa-8 glass-card" max-width="460" width="100%">
           <div class="text-center mb-6">

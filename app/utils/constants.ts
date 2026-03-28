@@ -4,10 +4,10 @@ export const ANBIETER = {
     slug: 'deutsche-fernsehlotterie',
     logo: '/images/anbieter/deutsche-fernsehlotterie.svg',
     losTypen: [
-      { value: 'jahreslos', label: 'Jahreslos', nummerFormat: /^\d{7}$/ },
-      { value: 'monatslos', label: 'Monatslos', nummerFormat: /^\d{7}$/ },
-      { value: 'mega-los', label: 'Mega-Los', nummerFormat: /^\d{7}$/ },
-      { value: 'traumhauslos', label: 'Traumhauslos', nummerFormat: /^\d{7}$/ },
+      { value: 'mega-los', label: 'Mega-Los', nummerFormat: /^\d{7,12}$/ },
+      { value: 'jahreslos', label: 'Jahreslos', nummerFormat: /^\d{7,12}$/ },
+      { value: 'dauerlos', label: 'Dauerlos', nummerFormat: /^\d{7,12}$/ },
+      { value: 'einzellos', label: 'Einzellos', nummerFormat: /^\d{7,12}$/ },
     ],
     ziehungsTermine: {
       beschreibung: 'Ziehungen finden an festgelegten Terminen statt (siehe Website)',

@@ -1,20 +1,14 @@
-export default defineNuxtRouteMiddleware(async (to) => {
-  const { useSession } = useAuth()
-  const { data: session, isPending } = useSession()
+export default defineNuxtRouteMiddleware(async (_to) => {
+  // Skip during SSR to avoid self-request deadlock
+  if (import.meta.server) return
 
-  // Wait for session to load
-  if (isPending.value) {
-    await new Promise<void>((resolve) => {
-      const unwatch = watch(isPending, (val) => {
-        if (!val) {
-          unwatch()
-          resolve()
-        }
-      })
-    })
+  const { data: session } = await useAuth().getSession()
+
+  if (!session?.user) {
+    return navigateTo('/login')
   }
 
-  if (!session.value?.user) {
-    return navigateTo('/login')
+  if (!session.user.emailVerified) {
+    return navigateTo({ path: '/verify-email', query: { email: session.user.email } })
   }
 })

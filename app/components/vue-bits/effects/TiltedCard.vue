@@ -4,7 +4,7 @@
     class="relative w-full h-full [perspective:800px] flex flex-col items-center justify-center"
     :style="{
       height: containerHeight,
-      width: containerWidth
+      width: containerWidth,
     }"
     @mousemove="handleMouse"
     @mouseenter="handleMouseEnter"
@@ -19,12 +19,12 @@
       class="relative [transform-style:preserve-3d]"
       :style="{
         width: imageWidth,
-        height: imageHeight
+        height: imageHeight,
       }"
       :animate="{
         rotateX: rotateXValue,
         rotateY: rotateYValue,
-        scale: scaleValue
+        scale: scaleValue,
       }"
       :transition="springTransition"
     >
@@ -34,7 +34,7 @@
         class="absolute top-0 left-0 object-cover rounded-[15px] will-change-transform [transform:translateZ(0)]"
         :style="{
           width: imageWidth,
-          height: imageHeight
+          height: imageHeight,
         }"
       />
 
@@ -55,7 +55,7 @@
         x: xValue,
         y: yValue,
         opacity: opacityValue,
-        rotate: rotateFigcaptionValue
+        rotate: rotateFigcaptionValue,
       }"
       :transition="tooltipTransition"
     >
@@ -65,23 +65,23 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, useTemplateRef } from 'vue';
-import { Motion } from 'motion-v';
+import { ref, computed, useTemplateRef } from 'vue'
+import { Motion } from 'motion-v'
 
 interface TiltedCardProps {
-  imageSrc: string;
-  altText?: string;
-  captionText?: string;
-  containerHeight?: string;
-  containerWidth?: string;
-  imageHeight?: string;
-  imageWidth?: string;
-  scaleOnHover?: number;
-  rotateAmplitude?: number;
-  showMobileWarning?: boolean;
-  showTooltip?: boolean;
-  overlayContent?: boolean;
-  displayOverlayContent?: boolean;
+  imageSrc: string
+  altText?: string
+  captionText?: string
+  containerHeight?: string
+  containerWidth?: string
+  imageHeight?: string
+  imageWidth?: string
+  scaleOnHover?: number
+  rotateAmplitude?: number
+  showMobileWarning?: boolean
+  showTooltip?: boolean
+  overlayContent?: boolean
+  displayOverlayContent?: boolean
 }
 
 const props = withDefaults(defineProps<TiltedCardProps>(), {
@@ -96,64 +96,64 @@ const props = withDefaults(defineProps<TiltedCardProps>(), {
   showMobileWarning: true,
   showTooltip: true,
   overlayContent: false,
-  displayOverlayContent: false
-});
+  displayOverlayContent: false,
+})
 
-const cardRef = useTemplateRef<HTMLElement>('cardRef');
-const xValue = ref(0);
-const yValue = ref(0);
-const rotateXValue = ref(0);
-const rotateYValue = ref(0);
-const scaleValue = ref(1);
-const opacityValue = ref(0);
-const rotateFigcaptionValue = ref(0);
-const lastY = ref(0);
+const cardRef = useTemplateRef<HTMLElement>('cardRef')
+const xValue = ref(0)
+const yValue = ref(0)
+const rotateXValue = ref(0)
+const rotateYValue = ref(0)
+const scaleValue = ref(1)
+const opacityValue = ref(0)
+const rotateFigcaptionValue = ref(0)
+const lastY = ref(0)
 
 const springTransition = computed(() => ({
   type: 'spring' as const,
   damping: 30,
   stiffness: 100,
-  mass: 2
-}));
+  mass: 2,
+}))
 
 const tooltipTransition = computed(() => ({
   type: 'spring' as const,
   damping: 30,
   stiffness: 350,
-  mass: 1
-}));
+  mass: 1,
+}))
 
 function handleMouse(e: MouseEvent) {
-  if (!cardRef.value) return;
+  if (!cardRef.value) return
 
-  const rect = cardRef.value.getBoundingClientRect();
-  const offsetX = e.clientX - rect.left - rect.width / 2;
-  const offsetY = e.clientY - rect.top - rect.height / 2;
+  const rect = cardRef.value.getBoundingClientRect()
+  const offsetX = e.clientX - rect.left - rect.width / 2
+  const offsetY = e.clientY - rect.top - rect.height / 2
 
-  const rotationX = (offsetY / (rect.height / 2)) * -props.rotateAmplitude;
-  const rotationY = (offsetX / (rect.width / 2)) * props.rotateAmplitude;
+  const rotationX = (offsetY / (rect.height / 2)) * -props.rotateAmplitude
+  const rotationY = (offsetX / (rect.width / 2)) * props.rotateAmplitude
 
-  rotateXValue.value = rotationX;
-  rotateYValue.value = rotationY;
+  rotateXValue.value = rotationX
+  rotateYValue.value = rotationY
 
-  xValue.value = e.clientX - rect.left;
-  yValue.value = e.clientY - rect.top;
+  xValue.value = e.clientX - rect.left
+  yValue.value = e.clientY - rect.top
 
-  const velocityY = offsetY - lastY.value;
-  rotateFigcaptionValue.value = -velocityY * 0.6;
-  lastY.value = offsetY;
+  const velocityY = offsetY - lastY.value
+  rotateFigcaptionValue.value = -velocityY * 0.6
+  lastY.value = offsetY
 }
 
 function handleMouseEnter() {
-  scaleValue.value = props.scaleOnHover;
-  opacityValue.value = 1;
+  scaleValue.value = props.scaleOnHover
+  opacityValue.value = 1
 }
 
 function handleMouseLeave() {
-  opacityValue.value = 0;
-  scaleValue.value = 1;
-  rotateXValue.value = 0;
-  rotateYValue.value = 0;
-  rotateFigcaptionValue.value = 0;
+  opacityValue.value = 0
+  scaleValue.value = 1
+  rotateXValue.value = 0
+  rotateYValue.value = 0
+  rotateFigcaptionValue.value = 0
 }
 </script>

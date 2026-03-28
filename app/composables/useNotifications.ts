@@ -27,7 +27,7 @@ export function useNotifications() {
     try {
       const data = await $fetch<NotificationSettings>('/api/notifications/settings')
       settings.value = data
-    } catch (e) {
+    } catch {
       error('Benachrichtigungs-Einstellungen konnten nicht geladen werden')
     } finally {
       isLoading.value = false
@@ -51,7 +51,7 @@ export function useNotifications() {
         })
         settings.value = updated
         success('Gespeichert')
-      } catch (e) {
+      } catch {
         error('Speichern fehlgeschlagen')
       } finally {
         isSaving.value = false
@@ -66,7 +66,7 @@ export function useNotifications() {
         body: { type },
       })
       success(`Test-${type === 'email' ? 'E-Mail' : 'Slack-Nachricht'} wurde gesendet`)
-    } catch (e) {
+    } catch {
       error(`Test-Benachrichtigung konnte nicht gesendet werden`)
     }
   }

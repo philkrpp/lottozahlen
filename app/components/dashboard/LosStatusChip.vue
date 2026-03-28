@@ -33,7 +33,7 @@ const chipIcon = computed(() => {
 const chipText = computed(() => {
   if (!props.isActive) return 'Inaktiv'
   if (hasWon.value) return 'Gewonnen!'
-  if (props.lastCheckResult) return 'Geprüft'
+  if (props.lastCheckResult) return 'Geprüft – noch kein Gewinn'
   return 'Ausstehend'
 })
 </script>

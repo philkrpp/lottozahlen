@@ -1,12 +1,22 @@
 import mongoose, { Schema, type Document } from 'mongoose'
 
+export interface IDrawGewinn {
+  anzahlGewinner: number
+  gewinn: string
+  gewinnArt: number
+  gewinnzahl: string
+  rang: number
+}
+
 export interface IDrawResults {
   winningNumbers: string[]
+  gewinne?: IDrawGewinn[]
   additionalData?: Record<string, unknown>
 }
 
 export interface IDraw extends Document {
   anbieter: string
+  externalId?: string
   drawDate: Date
   drawType: string
   results: IDrawResults
@@ -16,6 +26,17 @@ export interface IDraw extends Document {
   updatedAt: Date
 }
 
+const DrawGewinnSchema = new Schema<IDrawGewinn>(
+  {
+    anzahlGewinner: { type: Number },
+    gewinn: { type: String },
+    gewinnArt: { type: Number },
+    gewinnzahl: { type: String },
+    rang: { type: Number },
+  },
+  { _id: false },
+)
+
 const DrawSchema = new Schema<IDraw>(
   {
     anbieter: {
@@ -23,6 +44,9 @@ const DrawSchema = new Schema<IDraw>(
       enum: ['deutsche-fernsehlotterie'],
       required: true,
       index: true,
+    },
+    externalId: {
+      type: String,
     },
     drawDate: {
       type: Date,
@@ -34,6 +58,7 @@ const DrawSchema = new Schema<IDraw>(
     },
     results: {
       winningNumbers: { type: [String] },
+      gewinne: { type: [DrawGewinnSchema] },
       additionalData: { type: Schema.Types.Mixed },
     },
     rawResponse: {
@@ -47,6 +72,7 @@ const DrawSchema = new Schema<IDraw>(
   { timestamps: true },
 )
 
-DrawSchema.index({ anbieter: 1, drawDate: 1 }, { unique: true })
+DrawSchema.index({ anbieter: 1, externalId: 1 }, { unique: true, sparse: true })
+DrawSchema.index({ anbieter: 1, drawDate: 1 })
 
 export default mongoose.models.Draw || mongoose.model<IDraw>('Draw', DrawSchema)

@@ -28,7 +28,11 @@
 
         <!-- Name saving indicator -->
         <v-fade-transition>
-          <div v-if="isSavingName" class="text-caption mt-2" style="color: var(--v-theme-secondary)">
+          <div
+            v-if="isSavingName"
+            class="text-caption mt-2"
+            style="color: var(--v-theme-secondary)"
+          >
             <v-progress-circular size="12" width="2" indeterminate class="mr-1" />
             Wird gespeichert...
           </div>
@@ -46,7 +50,7 @@
             :type="showCurrentPassword ? 'text' : 'password'"
             prepend-inner-icon="mdi-lock"
             :append-inner-icon="showCurrentPassword ? 'mdi-eye-off' : 'mdi-eye'"
-            :rules="[v => !!v || 'Aktuelles Passwort ist erforderlich']"
+            :rules="[(v) => !!v || 'Aktuelles Passwort ist erforderlich']"
             class="mb-2"
             @click:append-inner="showCurrentPassword = !showCurrentPassword"
           />
@@ -70,7 +74,7 @@
             :append-inner-icon="showConfirmPassword ? 'mdi-eye-off' : 'mdi-eye'"
             :rules="[
               (v: string) => !!v || 'Bitte Passwort bestätigen',
-              (v: string) => v === newPassword || 'Passwörter stimmen nicht überein'
+              (v: string) => v === newPassword || 'Passwörter stimmen nicht überein',
             ]"
             class="mb-4"
             @click:append-inner="showConfirmPassword = !showConfirmPassword"
@@ -179,8 +183,8 @@ function debouncedSaveName() {
 }
 
 async function handleChangePassword() {
-  const { valid } = await passwordFormRef.value?.validate()
-  if (!valid) return
+  const result = await passwordFormRef.value?.validate()
+  if (!result?.valid) return
 
   isChangingPassword.value = true
   try {
@@ -196,8 +200,11 @@ async function handleChangePassword() {
     newPassword.value = ''
     confirmPassword.value = ''
     passwordFormRef.value?.resetValidation()
-  } catch (e: any) {
-    toastError(e?.data?.message || 'Passwort konnte nicht geändert werden')
+  } catch (e) {
+    toastError(
+      (e as { data?: { message?: string } })?.data?.message ||
+        'Passwort konnte nicht geändert werden',
+    )
   } finally {
     isChangingPassword.value = false
   }
