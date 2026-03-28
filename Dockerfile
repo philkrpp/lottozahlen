@@ -13,9 +13,12 @@ COPY . .
 RUN pnpm build
 
 FROM base AS production
+RUN apk add --no-cache curl
 WORKDIR /app
 COPY --from=build /app/.output ./.output
 ENV NODE_ENV=production
 ENV NITRO_PORT=3000
 EXPOSE 3000
+HEALTHCHECK --interval=10s --timeout=5s --start-period=15s --retries=3 \
+  CMD curl -f http://localhost:3000/api/health || exit 1
 CMD ["node", ".output/server/index.mjs"]
