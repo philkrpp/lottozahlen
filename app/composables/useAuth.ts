@@ -1,0 +1,9 @@
+import { createAuthClient } from 'better-auth/vue'
+
+export const authClient = createAuthClient({
+  baseURL: '/api/auth',
+})
+
+export function useAuth() {
+  return authClient
+}

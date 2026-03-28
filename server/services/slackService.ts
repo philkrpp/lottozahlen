@@ -1,0 +1,60 @@
+import { consola } from 'consola'
+
+interface SlackBlock {
+  type: string
+  text?: { type: string; text: string; emoji?: boolean }
+  elements?: { type: string; text: string }[]
+  fields?: { type: string; text: string }[]
+}
+
+export async function sendSlackNotification(
+  webhookUrl: string,
+  blocks: SlackBlock[],
+): Promise<boolean> {
+  try {
+    const response = await fetch(webhookUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ blocks }),
+    })
+
+    if (!response.ok) {
+      consola.error('[Slack] Webhook responded with', response.status)
+      return false
+    }
+
+    consola.success('[Slack] Notification sent')
+    return true
+  } catch (error) {
+    consola.error('[Slack] Failed to send:', error)
+    return false
+  }
+}
+
+export function gewinnBlocks(losNummer: string, prize: string, drawDate: string): SlackBlock[] {
+  const appUrl = process.env.NUXT_PUBLIC_APP_URL || 'http://localhost:3000'
+  return [
+    { type: 'header', text: { type: 'plain_text', text: '🎉 Gewinn-Benachrichtigung!', emoji: true } },
+    { type: 'section', fields: [
+      { type: 'mrkdwn', text: `*Losnummer:*\n\`${losNummer}\`` },
+      { type: 'mrkdwn', text: `*Gewinn:*\n${prize}` },
+    ] },
+    { type: 'section', text: { type: 'mrkdwn', text: `Ziehung vom *${drawDate}*` } },
+    { type: 'divider' },
+    { type: 'context', elements: [{ type: 'mrkdwn', text: `📊 <${appUrl}/dashboard|Zum Dashboard>` }] },
+  ]
+}
+
+export function keinGewinnBlocks(losNummer: string, drawDate: string): SlackBlock[] {
+  return [
+    { type: 'section', text: { type: 'mrkdwn', text: `Dein Los \`${losNummer}\` hat bei der Ziehung vom *${drawDate}* leider nicht gewonnen. 🍀 Nächstes Mal!` } },
+  ]
+}
+
+export function neueZiehungBlocks(anbieter: string, drawDate: string): SlackBlock[] {
+  const appUrl = process.env.NUXT_PUBLIC_APP_URL || 'http://localhost:3000'
+  return [
+    { type: 'section', text: { type: 'mrkdwn', text: `📢 Neue Ziehungsergebnisse für *${anbieter}* vom *${drawDate}* verfügbar!` } },
+    { type: 'context', elements: [{ type: 'mrkdwn', text: `📊 <${appUrl}/dashboard/ziehungen|Ergebnisse ansehen>` }] },
+  ]
+}

@@ -1,0 +1,140 @@
+@use 'variables' as *;
+
+// Google Fonts
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
+
+// Global Styles
+html, body {
+  font-family: $font-body;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6,
+.text-h1, .text-h2, .text-h3, .text-h4, .text-h5, .text-h6 {
+  font-family: $font-heading !important;
+}
+
+// Theme-dependent CSS Variables
+.v-theme--dark {
+  --glass-bg: rgba(17, 24, 39, 0.6);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  --glow-primary: 0 0 20px rgba(0, 229, 204, 0.3);
+  --text-gradient-from: #00e5cc;
+  --text-gradient-to: #38bdf8;
+  --card-hover-bg: rgba(26, 35, 50, 0.8);
+  --navbar-bg: rgba(10, 15, 30, 0.8);
+  --sidebar-bg: rgba(17, 24, 39, 0.95);
+}
+
+.v-theme--light {
+  --glass-bg: rgba(255, 255, 255, 0.7);
+  --glass-border: rgba(0, 0, 0, 0.06);
+  --glass-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  --glow-primary: 0 0 20px rgba(13, 148, 136, 0.15);
+  --text-gradient-from: #0d9488;
+  --text-gradient-to: #0ea5e9;
+  --card-hover-bg: rgba(249, 250, 251, 0.9);
+  --navbar-bg: rgba(255, 255, 255, 0.8);
+  --sidebar-bg: rgba(255, 255, 255, 0.95);
+}
+
+// Glass Card Style
+.glass-card {
+  background: var(--glass-bg) !important;
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition: all $transition-default;
+
+  &:hover {
+    background: var(--card-hover-bg) !important;
+    box-shadow: var(--glow-primary);
+  }
+}
+
+// Text Gradient
+.text-gradient {
+  background: linear-gradient(135deg, var(--text-gradient-from), var(--text-gradient-to));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+// Monospace for Los Numbers
+.los-nummer {
+  font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+  font-size: 1.25rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+}
+
+// Lotto Ball Style
+.lotto-ball {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  font-weight: 700;
+  font-size: 0.875rem;
+  background: linear-gradient(135deg, var(--text-gradient-from), var(--text-gradient-to));
+  color: white;
+  margin: 0 4px;
+}
+
+// Scrollbar Styling
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(128, 128, 128, 0.3);
+  border-radius: 3px;
+
+  &:hover {
+    background: rgba(128, 128, 128, 0.5);
+  }
+}
+
+// Page Transitions
+.page-enter-active,
+.page-leave-active {
+  transition: opacity 0.2s ease;
+}
+
+.page-enter-from,
+.page-leave-to {
+  opacity: 0;
+}
+
+// Section Spacing
+.section {
+  padding: 80px 0;
+
+  @media (max-width: 960px) {
+    padding: 48px 0;
+  }
+}
+
+// Sticky Navbar with backdrop blur
+.navbar-sticky {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  background: var(--navbar-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--glass-border);
+  transition: all $transition-default;
+}
