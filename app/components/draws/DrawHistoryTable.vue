@@ -10,16 +10,11 @@
       {{ formatDate(item.drawDate) }}
     </template>
     <template #item.results="{ item }">
-      <div class="d-flex flex-wrap ga-1">
-        <span
-          v-for="num in item.results.winningNumbers"
-          :key="num"
-          class="lotto-ball"
-          style="width: 32px; height: 32px; font-size: 0.75rem"
-        >
-          {{ num }}
-        </span>
-      </div>
+      <EndziffernTable
+        :gewinne="item.results.gewinne"
+        :winning-numbers="item.results.winningNumbers"
+        compact
+      />
     </template>
     <template #item.drawType="{ item }">
       <v-chip size="x-small" variant="tonal">{{ item.drawType || 'Hauptziehung' }}</v-chip>
@@ -29,13 +24,17 @@
 
 <script setup lang="ts">
 import { formatDate } from '~/utils/formatters'
+import EndziffernTable from '~/components/draws/EndziffernTable.vue'
 
 defineProps<{
   draws: Array<{
     _id: string
     drawDate: string
     drawType: string
-    results: { winningNumbers: string[] }
+    results: {
+      winningNumbers: string[]
+      gewinne?: Array<{ gewinnzahl: string; gewinn: string; rang: number }>
+    }
   }>
   loading: boolean
 }>()
@@ -43,6 +42,6 @@ defineProps<{
 const headers = [
   { title: 'Datum', key: 'drawDate', sortable: true },
   { title: 'Typ', key: 'drawType' },
-  { title: 'Gewinnzahlen', key: 'results', sortable: false },
+  { title: 'Endziffern / Gewinne', key: 'results', sortable: false },
 ]
 </script>

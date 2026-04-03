@@ -82,7 +82,50 @@ h6,
   letter-spacing: 0.05em;
 }
 
-// Lotto Ball Style
+// Endziffern Table
+.endziffern-table {
+  background: transparent !important;
+
+  th {
+    font-size: 0.7rem !important;
+    font-weight: 600 !important;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: rgb(var(--v-theme-secondary)) !important;
+    border-bottom: 1px solid var(--glass-border) !important;
+  }
+
+  td {
+    border-bottom: 1px solid var(--glass-border) !important;
+    padding-top: 5px !important;
+    padding-bottom: 5px !important;
+  }
+
+  tr:last-child td {
+    border-bottom: none !important;
+  }
+}
+
+.endziffer-nummer {
+  font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  color: rgb(var(--v-theme-primary));
+  background: rgba(var(--v-theme-primary), 0.08);
+  padding: 2px 10px;
+  border-radius: 4px;
+  display: inline-block;
+}
+
+.endziffer-gewinn {
+  font-weight: 600;
+  font-size: 0.85rem;
+  white-space: nowrap;
+  color: rgb(var(--v-theme-on-surface));
+}
+
+// Lotto Ball Style (deprecated — use .endziffer-nummer)
 .lotto-ball {
   display: inline-flex;
   align-items: center;

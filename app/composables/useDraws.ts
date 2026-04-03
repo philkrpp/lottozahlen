@@ -1,8 +1,17 @@
 import { ref } from 'vue'
 import { useToast } from './useToast'
 
+export interface DrawGewinn {
+  anzahlGewinner: number
+  gewinn: string
+  gewinnArt: number
+  gewinnzahl: string
+  rang: number
+}
+
 interface DrawResults {
   winningNumbers: string[]
+  gewinne?: DrawGewinn[]
   additionalData: Record<string, unknown>
 }
 

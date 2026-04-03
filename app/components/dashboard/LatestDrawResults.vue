@@ -23,24 +23,28 @@
         <span class="text-caption font-weight-bold">{{ formatDate(draw.drawDate) }}</span>
         <v-chip size="x-small" variant="tonal">{{ draw.drawType || 'Hauptziehung' }}</v-chip>
       </div>
-      <div class="d-flex flex-wrap ga-1">
-        <span v-for="num in draw.results.winningNumbers" :key="num" class="lotto-ball">{{
-          num
-        }}</span>
-      </div>
+      <EndziffernTable
+        :gewinne="draw.results.gewinne"
+        :winning-numbers="draw.results.winningNumbers"
+        compact
+      />
     </div>
   </v-card>
 </template>
 
 <script setup lang="ts">
 import { formatDate } from '~/utils/formatters'
+import EndziffernTable from '~/components/draws/EndziffernTable.vue'
 
 defineProps<{
   draws: Array<{
     _id: string
     drawDate: string
     drawType: string
-    results: { winningNumbers: string[] }
+    results: {
+      winningNumbers: string[]
+      gewinne?: Array<{ gewinnzahl: string; gewinn: string; rang: number }>
+    }
   }>
 }>()
 </script>

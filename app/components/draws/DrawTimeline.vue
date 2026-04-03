@@ -11,11 +11,11 @@
           <span class="text-subtitle-2 font-weight-bold">{{ formatDate(draw.drawDate) }}</span>
           <v-chip size="x-small" variant="tonal">{{ draw.drawType || 'Hauptziehung' }}</v-chip>
         </div>
-        <div class="d-flex flex-wrap ga-1 mb-2">
-          <span v-for="num in draw.results.winningNumbers" :key="num" class="lotto-ball">{{
-            num
-          }}</span>
-        </div>
+        <EndziffernTable
+          :gewinne="draw.results.gewinne"
+          :winning-numbers="draw.results.winningNumbers"
+          class="mb-2"
+        />
         <v-chip
           v-if="hasWonInDraw(draw)"
           color="accent"
@@ -31,13 +31,17 @@
 
 <script setup lang="ts">
 import { formatDate } from '~/utils/formatters'
+import EndziffernTable from '~/components/draws/EndziffernTable.vue'
 
 const props = defineProps<{
   draws: Array<{
     _id: string
     drawDate: string
     drawType: string
-    results: { winningNumbers: string[] }
+    results: {
+      winningNumbers: string[]
+      gewinne?: Array<{ gewinnzahl: string; gewinn: string; rang: number }>
+    }
   }>
   userWinDrawIds?: string[]
 }>()
