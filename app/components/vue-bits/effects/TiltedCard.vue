@@ -28,14 +28,13 @@
       }"
       :transition="springTransition"
     >
-      <img
+      <v-img
         :src="imageSrc"
         :alt="altText"
-        class="absolute top-0 left-0 object-cover rounded-[15px] will-change-transform [transform:translateZ(0)]"
-        :style="{
-          width: imageWidth,
-          height: imageHeight,
-        }"
+        cover
+        class="absolute top-0 left-0 rounded-[15px] will-change-transform [transform:translateZ(0)]"
+        :width="imageWidth"
+        :height="imageHeight"
       />
 
       <Motion

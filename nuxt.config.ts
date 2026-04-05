@@ -1,3 +1,12 @@
+import { version } from './package.json'
+import { writeFileSync } from 'node:fs'
+
+const isDev = process.env.NODE_ENV !== 'production'
+const buildTimestamp = new Date().toISOString().replace(/[-:]/g, '').replace('T', '-').slice(0, 15)
+const appRelease = isDev ? `${version}-dev` : `${version}+${buildTimestamp}`
+
+writeFileSync('./build-release.json', JSON.stringify({ release: appRelease }))
+
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
@@ -17,7 +26,11 @@ export default defineNuxtConfig({
   srcDir: 'app/',
   serverDir: 'server/',
 
-  modules: ['vuetify-nuxt-module', '@nuxt/eslint'],
+  modules: ['vuetify-nuxt-module', '@nuxt/eslint', '@sentry/nuxt/module'],
+
+  sentry: {
+    autoInjectServerSentry: 'top-level-import',
+  },
 
   runtimeConfig: {
     mongodbUri: process.env.MONGODB_URI || 'mongodb://localhost:27017/lottozahlen',
@@ -34,9 +47,19 @@ export default defineNuxtConfig({
       pass: process.env.SMTP_PASS || '',
       from: process.env.SMTP_FROM || 'noreply@lottozahlen.de',
     },
+    o2ApiUrl: process.env.O2_API_URL || '',
+    o2AuthUser: process.env.O2_AUTH_USER || '',
+    o2AuthPassword: process.env.O2_AUTH_PASSWORD || '',
     public: {
       appUrl: process.env.NUXT_PUBLIC_APP_URL || 'http://localhost:3000',
       appName: process.env.NUXT_PUBLIC_APP_NAME || 'Lottozahlen',
+      umamiHost: process.env.NUXT_PUBLIC_UMAMI_HOST || '',
+      umamiWebsiteId: process.env.NUXT_PUBLIC_UMAMI_WEBSITE_ID || '',
+      sentryDsn: process.env.SENTRY_DSN || '',
+      appVersion: appRelease,
+      o2Site: process.env.O2_SITE || '',
+      o2ClientToken: process.env.O2_CLIENT_TOKEN || '',
+      o2Org: process.env.O2_ORG || 'default',
     },
   },
 
@@ -50,7 +73,12 @@ export default defineNuxtConfig({
   },
 
   nitro: {
-    plugins: ['~~/server/plugins/mongodb.ts', '~~/server/plugins/cron.ts'],
+    plugins: [
+      '~~/server/plugins/mongodb.ts',
+      '~~/server/plugins/cron.ts',
+      '~~/server/plugins/sentry.ts',
+      '~~/server/plugins/o2-error-handler.ts',
+    ],
     externals: {
       external: ['croner'],
     },

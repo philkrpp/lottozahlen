@@ -26,4 +26,7 @@ logs
 # ESLint
 .eslintcache
 
+# Build-generated
+build-release.json
+
 .playwright-mcp
