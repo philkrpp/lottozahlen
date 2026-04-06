@@ -1,6 +1,6 @@
 import mongoose from 'mongoose'
 
-const log = useO2Logger('api:user')
+const log = useLogger('api:user')
 
 export default defineEventHandler(async (event) => {
   const userId = event.context.user.id

@@ -1,6 +1,6 @@
 import { getAuth } from '~~/server/utils/auth'
 
-const log = useO2Logger('auth')
+const log = useLogger('auth')
 
 export default defineEventHandler(async (event) => {
   const url = getRequestURL(event)

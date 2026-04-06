@@ -4,7 +4,7 @@ import { notifyUser } from '~~/server/services/notificationService'
 import type { IDraw } from '~~/server/models/Draw'
 import { getCompatibleLosTypesForDraw } from '~~/server/utils/drawCompatibility'
 
-const log = useO2Logger('cron')
+const log = useLogger('cron')
 
 function parseGewinnBetrag(gewinnStr: string): number | null {
   const match = gewinnStr.match(/([\d.]+),(\d{2})\s*Euro/)

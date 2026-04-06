@@ -5,7 +5,7 @@ import { fetchDrawList, fetchDrawDetails } from './fernsehlotterieApi'
 
 dayjs.extend(customParseFormat)
 
-const log = useO2Logger('draw-fetcher')
+const log = useLogger('draw-fetcher')
 
 export const ZIEHUNG_ART_LABELS: Record<number, string> = {
   0: 'Sonderziehung',

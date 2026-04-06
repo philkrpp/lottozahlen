@@ -1,7 +1,7 @@
 import { z } from 'zod'
 import NotificationSetting from '~~/server/models/NotificationSetting'
 
-const log = useO2Logger('api:notifications')
+const log = useLogger('api:notifications')
 
 const updateNotificationSettingsSchema = z.object({
   emailEnabled: z.boolean().optional(),

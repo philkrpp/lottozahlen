@@ -1,7 +1,7 @@
 import nodemailer from 'nodemailer'
 import type { Transporter } from 'nodemailer'
 
-const log = useO2Logger('email')
+const log = useLogger('email')
 
 let transporter: Transporter | null = null
 

@@ -1,6 +1,6 @@
 import { checkTicket } from './fernsehlotterieApi'
 
-const log = useO2Logger('los-checker')
+const log = useLogger('los-checker')
 
 function parseGewinnBetrag(gewinnStr: string): number | null {
   // "5.000,00 Euro" -> 5000

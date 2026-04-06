@@ -1,6 +1,6 @@
 import mongoose from 'mongoose'
 
-const log = useO2Logger('mongodb')
+const log = useLogger('mongodb')
 
 let isConnected = false
 

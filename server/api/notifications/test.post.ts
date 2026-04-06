@@ -1,7 +1,7 @@
 import NotificationSetting from '~~/server/models/NotificationSetting'
 import { sendTestNotification } from '~~/server/services/notificationService'
 
-const log = useO2Logger('api:notifications')
+const log = useLogger('api:notifications')
 
 export default defineEventHandler(async (event) => {
   const userId = event.context.user.id

@@ -2,7 +2,7 @@ import { z } from 'zod'
 import Los from '~~/server/models/Los'
 import { detectLosTypFromNummer } from '~~/server/utils/losTypDetector'
 
-const log = useO2Logger('api:los')
+const log = useLogger('api:los')
 
 const createLosSchema = z.object({
   losNummer: z.string().regex(/^\d{7,12}$/, 'Losnummer muss 7-12 Ziffern haben'),

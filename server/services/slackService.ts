@@ -1,4 +1,4 @@
-const log = useO2Logger('slack')
+const log = useLogger('slack')
 
 interface SlackBlock {
   type: string

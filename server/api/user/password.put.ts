@@ -1,7 +1,7 @@
 import { hashPassword, verifyPassword } from 'better-auth/crypto'
 import mongoose from 'mongoose'
 
-const log = useO2Logger('api:user')
+const log = useLogger('api:user')
 
 export default defineEventHandler(async (event) => {
   const userId = event.context.user.id
@@ -45,6 +45,12 @@ export default defineEventHandler(async (event) => {
     .collection('account')
     .updateOne({ userId, providerId: 'credential' }, { $set: { password: hashedPassword } })
 
-  log.info('Passwort geändert', { userId })
+  // Invalidate all other sessions (keep current)
+  await db.collection('session').deleteMany({
+    userId,
+    _id: { $ne: event.context.session.id },
+  })
+
+  log.info('Passwort geändert, andere Sessions invalidiert', { userId })
   return { success: true }
 })

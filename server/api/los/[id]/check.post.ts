@@ -3,7 +3,7 @@ import CheckResult from '~~/server/models/CheckResult'
 import { checkLosAgainstDraw } from '~~/server/services/losChecker'
 import { shouldCallApi } from '~~/server/utils/quickCheckThrottle'
 
-const log = useO2Logger('api:los')
+const log = useLogger('api:los')
 
 export default defineEventHandler(async (event) => {
   const userId = event.context.user.id

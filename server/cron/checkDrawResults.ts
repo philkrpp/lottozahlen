@@ -6,7 +6,7 @@ import { checkLosAgainstDraw } from '~~/server/services/losChecker'
 import { notifyUser } from '~~/server/services/notificationService'
 import { notifyUsersForDraw } from './notifyUsers'
 
-const log = useO2Logger('cron')
+const log = useLogger('cron')
 const ANBIETER_LIST = ['deutsche-fernsehlotterie']
 
 export async function checkDrawResults(): Promise<void> {

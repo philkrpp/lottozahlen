@@ -1,5 +1,5 @@
 export default defineNitroPlugin((nitroApp) => {
-  const log = useO2Logger('nitro')
+  const log = useLogger('nitro')
 
   // --- Unhandled Errors in Nitro ---
   nitroApp.hooks.hook('error', (error, { event }) => {
@@ -33,6 +33,6 @@ export default defineNitroPlugin((nitroApp) => {
   // --- Graceful Shutdown: Logs flushen vor dem Beenden ---
   nitroApp.hooks.hook('close', async () => {
     log.info('Server wird heruntergefahren — Logs werden geflusht.')
-    await flushO2Logs()
+    await flushLogs()
   })
 })

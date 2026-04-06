@@ -1,6 +1,6 @@
 import Los from '~~/server/models/Los'
 
-const log = useO2Logger('api:los')
+const log = useLogger('api:los')
 
 export default defineEventHandler(async (event) => {
   const userId = event.context.user.id

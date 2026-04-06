@@ -1,7 +1,7 @@
 import dayjs from 'dayjs'
 import NotificationSetting from '~~/server/models/NotificationSetting'
 
-const log = useO2Logger('notifications')
+const log = useLogger('notifications')
 import { sendEmail, gewinnTemplate, keinGewinnTemplate, neueZiehungTemplate } from './emailService'
 import {
   sendSlackNotification,

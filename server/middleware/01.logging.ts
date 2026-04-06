@@ -1,32 +1,38 @@
+import pinoHttp from 'pino-http'
+import { rootLogger } from '../utils/logger'
+
+const httpLogger = pinoHttp({
+  logger: rootLogger.child({ module: 'http' }),
+  autoLogging: {
+    ignore: (req) => {
+      const url = req.url || ''
+      return url.startsWith('/_nuxt') || url.startsWith('/__nuxt')
+    },
+  },
+  customReceivedMessage(req) {
+    return `→ ${req.method} ${req.url}`
+  },
+  customLogLevel(_req, res, err) {
+    if (err || (res.statusCode && res.statusCode >= 500)) return 'error'
+    if (res.statusCode && res.statusCode >= 400) return 'warn'
+    return 'info'
+  },
+  customSuccessMessage(req, res, responseTime) {
+    return `${req.method} ${req.url} ${res.statusCode} (${Math.round(responseTime)}ms)`
+  },
+  customErrorMessage(req, _res, err) {
+    return `${req.method} ${req.url} ${err.message}`
+  },
+  customProps(req) {
+    return {
+      meta: {
+        userAgent: req.headers['user-agent'] || '',
+        ip: (req.headers['x-forwarded-for'] as string) || (req.headers['x-real-ip'] as string) || '',
+      },
+    }
+  },
+})
+
 export default defineEventHandler((event) => {
-  const log = useO2Logger('http')
-  const startTime = Date.now()
-  const method = getMethod(event)
-  const url = getRequestURL(event)
-
-  // Nur API-Requests loggen, keine Assets
-  if (url.pathname.startsWith('/_nuxt') || url.pathname.startsWith('/__nuxt')) return
-
-  log.info(`→ ${method} ${url.pathname}`, {
-    method,
-    path: url.pathname,
-    query: url.search || '',
-    userAgent: getHeader(event, 'user-agent') || '',
-    ip: getHeader(event, 'x-forwarded-for') || getHeader(event, 'x-real-ip') || '',
-    type: 'request',
-  })
-
-  event.node.res.on('finish', () => {
-    const duration = Date.now() - startTime
-    const statusCode = event.node.res.statusCode
-    const logFn = statusCode >= 500 ? 'error' : statusCode >= 400 ? 'warn' : 'info'
-
-    log[logFn](`← ${method} ${url.pathname} ${statusCode} (${duration}ms)`, {
-      method,
-      path: url.pathname,
-      statusCode,
-      duration,
-      type: 'response',
-    })
-  })
+  httpLogger(event.node.req, event.node.res)
 })

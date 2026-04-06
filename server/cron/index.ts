@@ -1,7 +1,7 @@
 import { Cron } from 'croner'
 import { checkDrawResults } from './checkDrawResults'
 
-const log = useO2Logger('cron')
+const log = useLogger('cron')
 
 export function registerCronJobs(): void {
   // Check draw results every Sunday at 20:15 (after both 18:00 and 20:00 draws)

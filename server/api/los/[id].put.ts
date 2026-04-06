@@ -2,7 +2,7 @@ import { z } from 'zod'
 import Los from '~~/server/models/Los'
 import { detectLosTypFromNummer } from '~~/server/utils/losTypDetector'
 
-const log = useO2Logger('api:los')
+const log = useLogger('api:los')
 
 const updateLosSchema = z.object({
   displayName: z.string().max(50).optional(),

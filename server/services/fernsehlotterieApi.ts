@@ -1,4 +1,4 @@
-const log = useO2Logger('fernsehlotterie-api')
+const log = useLogger('fernsehlotterie-api')
 const BASE_URL = 'https://www.fernsehlotterie.de'
 
 const SHARED_HEADERS: Record<string, string> = {

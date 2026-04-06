@@ -1,7 +1,7 @@
 import { hashPassword } from 'better-auth/crypto'
 import mongoose from 'mongoose'
 
-const log = useO2Logger('api:user')
+const log = useLogger('api:user')
 
 export default defineEventHandler(async (event) => {
   const session = event.context.session
@@ -35,6 +35,12 @@ export default defineEventHandler(async (event) => {
     .collection('account')
     .updateOne({ userId, providerId: 'credential' }, { $set: { password: hashedPassword } })
 
-  log.info('Passwort gesetzt (via Magic Link)', { userId })
+  // Invalidate all other sessions (keep current)
+  await db.collection('session').deleteMany({
+    userId,
+    _id: { $ne: session.id },
+  })
+
+  log.info('Passwort gesetzt (via Magic Link), andere Sessions invalidiert', { userId })
   return { success: true }
 })

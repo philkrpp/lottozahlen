@@ -4,7 +4,7 @@ import CheckResult from '~~/server/models/CheckResult'
 import NotificationSetting from '~~/server/models/NotificationSetting'
 import UserPreference from '~~/server/models/UserPreference'
 
-const log = useO2Logger('api:user')
+const log = useLogger('api:user')
 
 export default defineEventHandler(async (event) => {
   const userId = event.context.user.id
