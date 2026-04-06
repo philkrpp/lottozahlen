@@ -50,6 +50,7 @@ export default defineNuxtConfig({
     o2ApiUrl: process.env.O2_API_URL || '',
     o2AuthUser: process.env.O2_AUTH_USER || '',
     o2AuthPassword: process.env.O2_AUTH_PASSWORD || '',
+    otelEndpoint: process.env.OTEL_EXPORTER_OTLP_ENDPOINT || '',
     public: {
       appUrl: process.env.NUXT_PUBLIC_APP_URL || 'http://localhost:3000',
       appName: process.env.NUXT_PUBLIC_APP_NAME || 'Lottozahlen',
@@ -60,6 +61,7 @@ export default defineNuxtConfig({
       o2Site: process.env.O2_SITE || '',
       o2ClientToken: process.env.O2_CLIENT_TOKEN || '',
       o2Org: process.env.O2_ORG || 'default',
+      otelEndpoint: process.env.OTEL_EXPORTER_OTLP_ENDPOINT || '',
     },
   },
 
@@ -74,13 +76,24 @@ export default defineNuxtConfig({
 
   nitro: {
     plugins: [
+      '~~/server/plugins/00.otel.ts',
+      '~~/server/plugins/01.error-handler.ts',
       '~~/server/plugins/mongodb.ts',
       '~~/server/plugins/cron.ts',
-      '~~/server/plugins/sentry.ts',
-      '~~/server/plugins/o2-error-handler.ts',
     ],
     externals: {
-      external: ['croner'],
+      external: [
+        'croner', 'pino', 'pino-http', 'pino-pretty',
+        'mongoose', 'mongodb',
+        '@opentelemetry/api',
+        '@opentelemetry/sdk-node',
+        '@opentelemetry/sdk-metrics',
+        '@opentelemetry/auto-instrumentations-node',
+        '@opentelemetry/exporter-trace-otlp-http',
+        '@opentelemetry/exporter-metrics-otlp-http',
+        '@opentelemetry/resources',
+        '@opentelemetry/semantic-conventions',
+      ],
     },
   },
 
