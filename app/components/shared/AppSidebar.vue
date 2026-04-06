@@ -26,23 +26,28 @@
       </v-list>
 
       <div class="pa-4">
-        <ThemeToggle class="mb-4" />
-        <v-divider class="mb-4" />
+        <div class="d-flex align-center mb-3">
+          <ThemeToggle />
+          <v-tooltip text="Abmelden" location="top">
+            <template #activator="{ props }">
+              <v-btn v-bind="props" icon="mdi-logout" variant="text" size="small" @click="handleLogout" />
+            </template>
+          </v-tooltip>
+        </div>
+        <v-divider class="mb-3" />
         <v-list-item
           v-if="user"
-          :title="user.name || user.email"
-          :subtitle="user.email"
           density="compact"
           rounded="lg"
+          class="sidebar-user-item"
         >
           <template #prepend>
-            <v-avatar size="32" color="primary">
-              <span class="text-caption font-weight-bold">{{ userInitials }}</span>
+            <v-avatar size="28" color="primary" class="me-2">
+              <span class="font-weight-bold" style="font-size: 0.65rem">{{ userInitials }}</span>
             </v-avatar>
           </template>
-          <template #append>
-            <v-btn icon="mdi-logout" variant="text" size="small" @click="handleLogout" />
-          </template>
+          <v-list-item-title class="sidebar-user-name">{{ user.name || user.email }}</v-list-item-title>
+          <v-list-item-subtitle class="sidebar-user-email">{{ user.email }}</v-list-item-subtitle>
         </v-list-item>
       </div>
     </div>
@@ -95,3 +100,19 @@ async function handleLogout() {
   navigateTo('/login')
 }
 </script>
+
+<style scoped>
+.sidebar-user-item :deep(.v-list-item__prepend) {
+  margin-inline-end: 0;
+}
+
+.sidebar-user-name {
+  font-size: 0.75rem !important;
+  line-height: 1.2;
+}
+
+.sidebar-user-email {
+  font-size: 0.65rem !important;
+  line-height: 1.2;
+}
+</style>

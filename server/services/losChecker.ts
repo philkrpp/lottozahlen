@@ -1,5 +1,6 @@
-import { consola } from 'consola'
 import { checkTicket } from './fernsehlotterieApi'
+
+const log = useO2Logger('los-checker')
 
 function parseGewinnBetrag(gewinnStr: string): number | null {
   // "5.000,00 Euro" -> 5000
@@ -21,11 +22,14 @@ export async function checkLosAgainstDraw(
   prizeAmount: number | null
   rawApiResponse?: unknown
 }> {
+  log.info('Los-Check starten', { losNummer, anbieter: _anbieter, losTyp: _losTyp })
+
   try {
     const response = await checkTicket(losNummer)
 
     const gewinne = response.displayData?.gewinne ?? []
     if (gewinne.length === 0) {
+      log.info('Los-Check abgeschlossen: kein Gewinn', { losNummer })
       return { hasWon: false, prize: null, prizeAmount: null, rawApiResponse: response }
     }
 
@@ -36,6 +40,8 @@ export async function checkLosAgainstDraw(
       return sum + (amount ?? 0)
     }, 0)
 
+    log.info('Los-Check abgeschlossen: GEWINN!', { losNummer, prize: prizes.join(', '), prizeAmount: totalAmount })
+
     return {
       hasWon: true,
       prize: prizes.join(', '),
@@ -43,7 +49,7 @@ export async function checkLosAgainstDraw(
       rawApiResponse: response,
     }
   } catch (error) {
-    consola.error(`[losChecker] Error checking ${losNummer}:`, error)
+    log.error(`Los-Check fehlgeschlagen`, { losNummer, error: String(error) })
     throw error
   }
 }

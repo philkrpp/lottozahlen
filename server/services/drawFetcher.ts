@@ -1,10 +1,11 @@
-import { consola } from 'consola'
 import dayjs from 'dayjs'
 import customParseFormat from 'dayjs/plugin/customParseFormat.js'
 import Draw from '~~/server/models/Draw'
 import { fetchDrawList, fetchDrawDetails } from './fernsehlotterieApi'
 
 dayjs.extend(customParseFormat)
+
+const log = useO2Logger('draw-fetcher')
 
 export const ZIEHUNG_ART_LABELS: Record<number, string> = {
   0: 'Sonderziehung',
@@ -33,7 +34,7 @@ export async function fetchLatestDrawResults(_anbieter: string): Promise<
   }[]
 > {
   const drawList = await fetchDrawList()
-  consola.info(`[drawFetcher] Fetched ${drawList.length} draws from API`)
+  log.info(`Fetched ${drawList.length} draws from API`)
 
   // Find which draws we don't have yet
   const existingIds = await Draw.find(
@@ -43,7 +44,7 @@ export async function fetchLatestDrawResults(_anbieter: string): Promise<
   const existingIdSet = new Set(existingIds.map((d) => d.externalId))
 
   const newDraws = drawList.filter((d) => !existingIdSet.has(d.id))
-  consola.info(`[drawFetcher] ${newDraws.length} new draws to fetch`)
+  log.info(`${newDraws.length} new draws to fetch`, { existingCount: existingIds.length })
 
   const results = []
   for (const draw of newDraws) {
@@ -62,7 +63,7 @@ export async function fetchLatestDrawResults(_anbieter: string): Promise<
         rawResponse: details,
       })
     } catch (error) {
-      consola.error(`[drawFetcher] Error fetching draw ${draw.id}:`, error)
+      log.error(`Error fetching draw ${draw.id}`, { drawId: draw.id, error: String(error) })
     }
   }
 

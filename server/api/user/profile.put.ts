@@ -1,10 +1,13 @@
 import mongoose from 'mongoose'
 
+const log = useO2Logger('api:user')
+
 export default defineEventHandler(async (event) => {
   const userId = event.context.user.id
   const { name } = await readBody<{ name?: string }>(event)
 
   if (typeof name !== 'string' || name.length > 100) {
+    log.warn('Ungültiger Name bei Profil-Update', { userId })
     throw createError({ statusCode: 400, message: 'Ungültiger Name' })
   }
 
@@ -13,5 +16,6 @@ export default defineEventHandler(async (event) => {
     .collection('user')
     .updateOne({ _id: userId }, { $set: { name: name.trim(), updatedAt: new Date() } })
 
+  log.info('Profil aktualisiert', { userId })
   return { success: true }
 })

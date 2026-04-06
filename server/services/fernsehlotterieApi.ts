@@ -1,3 +1,4 @@
+const log = useO2Logger('fernsehlotterie-api')
 const BASE_URL = 'https://www.fernsehlotterie.de'
 
 const SHARED_HEADERS: Record<string, string> = {
@@ -79,13 +80,46 @@ export interface ZiehungDetail {
 }
 
 async function apiFetch(url: string, options: RequestInit = {}): Promise<Response> {
-  return fetch(url, {
-    ...options,
-    headers: {
-      ...SHARED_HEADERS,
-      ...options.headers,
-    },
-  })
+  const method = (options.method || 'GET').toUpperCase()
+  const path = url.replace(BASE_URL, '')
+
+  log.info(`→ ${method} ${path}`, { type: 'http-out', method, url })
+
+  const start = Date.now()
+  try {
+    const res = await fetch(url, {
+      ...options,
+      headers: {
+        ...SHARED_HEADERS,
+        ...options.headers,
+      },
+    })
+
+    const duration = Date.now() - start
+    const contentLength = res.headers.get('content-length')
+    const logFn = res.ok ? 'info' : 'error'
+
+    log[logFn](`← ${method} ${path} ${res.status} (${duration}ms)`, {
+      type: 'http-out',
+      method,
+      url,
+      statusCode: res.status,
+      duration,
+      contentLength: contentLength ? Number(contentLength) : undefined,
+    })
+
+    return res
+  } catch (error) {
+    const duration = Date.now() - start
+    log.error(`← ${method} ${path} NETWORK_ERROR (${duration}ms)`, {
+      type: 'http-out',
+      method,
+      url,
+      duration,
+      error: String(error),
+    })
+    throw error
+  }
 }
 
 export async function checkTicket(losnummer: string): Promise<GewinnabfrageResponse> {

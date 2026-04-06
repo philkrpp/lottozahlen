@@ -1,4 +1,3 @@
-import { consola } from 'consola'
 import Draw from '~~/server/models/Draw'
 import Los from '~~/server/models/Los'
 import CheckResult from '~~/server/models/CheckResult'
@@ -7,10 +6,16 @@ import { checkLosAgainstDraw } from '~~/server/services/losChecker'
 import { notifyUser } from '~~/server/services/notificationService'
 import { notifyUsersForDraw } from './notifyUsers'
 
+const log = useO2Logger('cron')
 const ANBIETER_LIST = ['deutsche-fernsehlotterie']
 
 export async function checkDrawResults(): Promise<void> {
-  consola.info('[Cron] Checking draw results...')
+  log.info('Cron-Job gestartet: Ziehungsergebnisse prüfen')
+
+  let newDrawsCount = 0
+  let checkedLoseCount = 0
+  let gewinneCount = 0
+  let errorsCount = 0
 
   // --- Part 1: Fetch new draws and match locally ---
   for (const anbieter of ANBIETER_LIST) {
@@ -33,25 +38,26 @@ export async function checkDrawResults(): Promise<void> {
           fetchedAt: new Date(),
         })
 
-        consola.success(
-          `[Cron] New draw saved: ${anbieter} - ${result.drawDate} (${result.drawType})`,
-        )
+        newDrawsCount++
+        log.info('Neue Ziehung gespeichert', { anbieter, drawDate: result.drawDate, drawType: result.drawType, externalId: result.externalId })
 
         // Trigger local matching for this draw
         await notifyUsersForDraw(draw)
       }
     } catch (error) {
-      consola.error(`[Cron] Error fetching draws for ${anbieter}:`, error)
+      errorsCount++
+      log.error(`Fehler beim Abrufen der Ziehungen`, { anbieter, error: String(error) })
     }
   }
 
   // --- Part 2: Direct per-ticket API check ---
-  consola.info('[Cron] Running direct ticket checks...')
   const activeLose = await Los.find({ isActive: true })
+  log.info('Direkte Los-Checks starten', { activeLoseCount: activeLose.length })
 
   for (const los of activeLose) {
     try {
       const result = await checkLosAgainstDraw(los.losNummer, los.anbieter, los.losTyp)
+      checkedLoseCount++
 
       // Save CheckResult (no drawId for direct checks)
       const checkResult = await CheckResult.create({
@@ -71,6 +77,8 @@ export async function checkDrawResults(): Promise<void> {
       }
       await los.save()
 
+      if (result.hasWon) gewinneCount++
+
       // Send notification
       const sent = await notifyUser({
         userId: los.userId.toString(),
@@ -86,9 +94,10 @@ export async function checkDrawResults(): Promise<void> {
         await checkResult.save()
       }
     } catch (error) {
-      consola.error(`[Cron] Error checking los ${los._id}:`, error)
+      errorsCount++
+      log.error('Fehler beim Los-Check', { losId: String(los._id), losNummer: los.losNummer, error: String(error) })
     }
   }
 
-  consola.success('[Cron] Draw results check completed')
+  log.info('Cron-Job abgeschlossen', { newDrawsCount, checkedLoseCount, gewinneCount, errorsCount })
 }

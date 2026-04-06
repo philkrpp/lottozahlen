@@ -1,6 +1,8 @@
 import { hashPassword, verifyPassword } from 'better-auth/crypto'
 import mongoose from 'mongoose'
 
+const log = useO2Logger('api:user')
+
 export default defineEventHandler(async (event) => {
   const userId = event.context.user.id
   const { currentPassword, newPassword } = await readBody<{
@@ -9,10 +11,12 @@ export default defineEventHandler(async (event) => {
   }>(event)
 
   if (!currentPassword || !newPassword) {
+    log.warn('Passwort-Änderung: fehlende Felder', { userId })
     throw createError({ statusCode: 400, message: 'Beide Passwörter sind erforderlich' })
   }
 
   if (newPassword.length < 8) {
+    log.warn('Passwort-Änderung: zu kurz', { userId })
     throw createError({
       statusCode: 400,
       message: 'Neues Passwort muss mindestens 8 Zeichen lang sein',
@@ -26,11 +30,13 @@ export default defineEventHandler(async (event) => {
   })
 
   if (!account?.password) {
+    log.warn('Passwort-Änderung: kein Passwort-Login', { userId })
     throw createError({ statusCode: 400, message: 'Kein Passwort-Login für diesen Account' })
   }
 
   const isValid = await verifyPassword({ hash: account.password, password: currentPassword })
   if (!isValid) {
+    log.warn('Passwort-Änderung: falsches aktuelles Passwort', { userId })
     throw createError({ statusCode: 403, message: 'Aktuelles Passwort ist falsch' })
   }
 
@@ -39,5 +45,6 @@ export default defineEventHandler(async (event) => {
     .collection('account')
     .updateOne({ userId, providerId: 'credential' }, { $set: { password: hashedPassword } })
 
+  log.info('Passwort geändert', { userId })
   return { success: true }
 })

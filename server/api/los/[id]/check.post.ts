@@ -3,18 +3,25 @@ import CheckResult from '~~/server/models/CheckResult'
 import { checkLosAgainstDraw } from '~~/server/services/losChecker'
 import { shouldCallApi } from '~~/server/utils/quickCheckThrottle'
 
+const log = useO2Logger('api:los')
+
 export default defineEventHandler(async (event) => {
   const userId = event.context.user.id
   const losId = getRouterParam(event, 'id')
 
   const los = await Los.findOne({ _id: losId, userId })
-  if (!los) throw createError({ statusCode: 404, message: 'Los nicht gefunden' })
+  if (!los) {
+    log.warn('Los nicht gefunden bei manuellem Check', { userId, losId })
+    throw createError({ statusCode: 404, message: 'Los nicht gefunden' })
+  }
 
   // Rate-limit: max 1 API call per 24h, reset on Sundays at 18:00 and 20:00 Berlin
   if (!shouldCallApi(los.lastManualCheckAt)) {
+    log.debug('Rate-Limit: gecachtes Ergebnis zurückgeben', { userId, losId, losNummer: los.losNummer })
     return { los, result: los.lastCheckResult }
   }
 
+  log.info('Manueller Los-Check gestartet', { userId, losId, losNummer: los.losNummer })
   const result = await checkLosAgainstDraw(los.losNummer, los.anbieter, los.losTyp)
 
   const checkResult = await CheckResult.create({
@@ -36,5 +43,6 @@ export default defineEventHandler(async (event) => {
   }
   await los.save()
 
+  log.info('Manueller Los-Check abgeschlossen', { userId, losId, losNummer: los.losNummer, hasWon: result.hasWon, prize: result.prize })
   return { los, result: checkResult }
 })

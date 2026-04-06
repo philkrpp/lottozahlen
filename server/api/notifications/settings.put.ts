@@ -1,6 +1,8 @@
 import { z } from 'zod'
 import NotificationSetting from '~~/server/models/NotificationSetting'
 
+const log = useO2Logger('api:notifications')
+
 const updateNotificationSettingsSchema = z.object({
   emailEnabled: z.boolean().optional(),
   emailAddress: z.string().email('Ungueltige E-Mail-Adresse').optional(),
@@ -22,5 +24,6 @@ export default defineEventHandler(async (event) => {
     { returnDocument: 'after', upsert: true },
   )
 
+  log.info('Benachrichtigungs-Einstellungen aktualisiert', { userId, fields: Object.keys(data) })
   return settings
 })

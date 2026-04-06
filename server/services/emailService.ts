@@ -1,6 +1,7 @@
 import nodemailer from 'nodemailer'
 import type { Transporter } from 'nodemailer'
-import { consola } from 'consola'
+
+const log = useO2Logger('email')
 
 let transporter: Transporter | null = null
 
@@ -8,6 +9,8 @@ function getTransporter(): Transporter {
   if (transporter) return transporter
 
   const config = useRuntimeConfig()
+
+  log.info('SMTP-Transporter initialisieren', { host: config.smtp.host, port: config.smtp.port, secure: config.smtp.port === 465 })
 
   transporter = nodemailer.createTransport({
     host: config.smtp.host,
@@ -27,6 +30,9 @@ export async function sendEmail(to: string, subject: string, html: string): Prom
     const config = useRuntimeConfig()
     const transport = getTransporter()
 
+    log.info('→ SMTP sendMail', { type: 'http-out', method: 'SMTP', to, subject })
+    const start = Date.now()
+
     await transport.sendMail({
       from: `"${config.public.appName}" <${config.smtp.from}>`,
       to,
@@ -34,10 +40,11 @@ export async function sendEmail(to: string, subject: string, html: string): Prom
       html,
     })
 
-    consola.success(`[Email] Sent to ${to}: ${subject}`)
+    const duration = Date.now() - start
+    log.info(`← SMTP sendMail OK (${duration}ms)`, { type: 'http-out', method: 'SMTP', to, subject, duration })
     return true
   } catch (error) {
-    consola.error('[Email] Failed to send:', error)
+    log.error('← SMTP sendMail FEHLER', { type: 'http-out', method: 'SMTP', to, subject, error: String(error) })
     return false
   }
 }

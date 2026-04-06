@@ -1,5 +1,7 @@
 import dayjs from 'dayjs'
 import NotificationSetting from '~~/server/models/NotificationSetting'
+
+const log = useO2Logger('notifications')
 import { sendEmail, gewinnTemplate, keinGewinnTemplate, neueZiehungTemplate } from './emailService'
 import {
   sendSlackNotification,
@@ -22,17 +24,31 @@ interface NotifyParams {
 }
 
 export async function notifyUser(params: NotifyParams): Promise<boolean> {
+  log.info('Benachrichtigung prüfen', { userId: params.userId, type: params.type, losNummer: params.losNummer })
+
   const settings = await NotificationSetting.findOne({ userId: params.userId })
-  if (!settings) return false
+  if (!settings) {
+    log.debug('Keine Benachrichtigungs-Einstellungen gefunden', { userId: params.userId })
+    return false
+  }
 
   const dateStr = formatDate(params.drawDate)
   let emailSent = false
   let slackSent = false
 
   // Check notification preferences
-  if (params.type === 'gewinn' && !settings.notifyOnWin) return false
-  if (params.type === 'kein-gewinn' && !settings.notifyOnNoWin) return false
-  if (params.type === 'neue-ziehung' && !settings.notifyOnNewDraw) return false
+  if (params.type === 'gewinn' && !settings.notifyOnWin) {
+    log.debug('Benachrichtigung übersprungen: Gewinn-Benachrichtigung deaktiviert', { userId: params.userId })
+    return false
+  }
+  if (params.type === 'kein-gewinn' && !settings.notifyOnNoWin) {
+    log.debug('Benachrichtigung übersprungen: Kein-Gewinn-Benachrichtigung deaktiviert', { userId: params.userId })
+    return false
+  }
+  if (params.type === 'neue-ziehung' && !settings.notifyOnNewDraw) {
+    log.debug('Benachrichtigung übersprungen: Neue-Ziehung-Benachrichtigung deaktiviert', { userId: params.userId })
+    return false
+  }
 
   // Send email
   if (settings.emailEnabled && settings.emailAddress) {
@@ -55,6 +71,7 @@ export async function notifyUser(params: NotifyParams): Promise<boolean> {
     }
 
     emailSent = await sendEmail(settings.emailAddress, subject, html)
+    log.info('E-Mail-Benachrichtigung', { userId: params.userId, type: params.type, sent: emailSent })
   }
 
   // Send Slack
@@ -72,8 +89,10 @@ export async function notifyUser(params: NotifyParams): Promise<boolean> {
         break
     }
     slackSent = await sendSlackNotification(settings.slackWebhookUrl, blocks)
+    log.info('Slack-Benachrichtigung', { userId: params.userId, type: params.type, sent: slackSent })
   }
 
+  log.info('Benachrichtigung abgeschlossen', { userId: params.userId, type: params.type, emailSent, slackSent })
   return emailSent || slackSent
 }
 

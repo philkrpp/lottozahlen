@@ -2,6 +2,8 @@ import { z } from 'zod'
 import Los from '~~/server/models/Los'
 import { detectLosTypFromNummer } from '~~/server/utils/losTypDetector'
 
+const log = useO2Logger('api:los')
+
 const updateLosSchema = z.object({
   displayName: z.string().max(50).optional(),
   isActive: z.boolean().optional(),
@@ -23,6 +25,7 @@ export default defineEventHandler(async (event) => {
     try {
       updateData.losTyp = detectLosTypFromNummer(data.losNummer)
     } catch {
+      log.warn('Los-Typ nicht erkannt bei Update', { userId, losId, losNummer: data.losNummer })
       throw createError({
         statusCode: 422,
         message: 'Los-Typ konnte nicht erkannt werden. Bitte prüfe die Losnummer.',
@@ -37,8 +40,10 @@ export default defineEventHandler(async (event) => {
   )
 
   if (!los) {
+    log.warn('Los nicht gefunden bei Update', { userId, losId })
     throw createError({ statusCode: 404, message: 'Los nicht gefunden' })
   }
 
+  log.info('Los aktualisiert', { userId, losId, fields: Object.keys(data) })
   return los
 })

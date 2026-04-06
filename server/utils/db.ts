@@ -1,5 +1,6 @@
 import mongoose from 'mongoose'
-import { consola } from 'consola'
+
+const log = useO2Logger('mongodb')
 
 let isConnected = false
 
@@ -10,16 +11,16 @@ export async function connectDB() {
   const uri = config.mongodbUri
 
   if (!uri) {
-    consola.warn('[MongoDB] No MONGODB_URI configured, skipping connection')
+    log.warn('Keine MONGODB_URI konfiguriert, überspringe Verbindung')
     return
   }
 
   try {
     await mongoose.connect(uri)
     isConnected = true
-    consola.success('[MongoDB] Connected successfully')
+    log.info('Verbindung erfolgreich hergestellt')
   } catch (error) {
-    consola.error('[MongoDB] Connection failed:', error)
+    log.error('Verbindung fehlgeschlagen', { error: String(error) })
     // Retry after 5 seconds
     setTimeout(() => {
       isConnected = false
@@ -28,7 +29,7 @@ export async function connectDB() {
   }
 
   mongoose.connection.on('disconnected', () => {
-    consola.warn('[MongoDB] Disconnected')
+    log.warn('Verbindung getrennt')
     isConnected = false
   })
 }

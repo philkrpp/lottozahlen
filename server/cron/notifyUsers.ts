@@ -1,9 +1,10 @@
-import { consola } from 'consola'
 import Los from '~~/server/models/Los'
 import CheckResult from '~~/server/models/CheckResult'
 import { notifyUser } from '~~/server/services/notificationService'
 import type { IDraw } from '~~/server/models/Draw'
 import { getCompatibleLosTypesForDraw } from '~~/server/utils/drawCompatibility'
+
+const log = useO2Logger('cron')
 
 function parseGewinnBetrag(gewinnStr: string): number | null {
   const match = gewinnStr.match(/([\d.]+),(\d{2})\s*Euro/)
@@ -14,13 +15,11 @@ function parseGewinnBetrag(gewinnStr: string): number | null {
 }
 
 export async function notifyUsersForDraw(draw: IDraw): Promise<void> {
-  consola.info(
-    `[Cron] Matching users for draw ${draw.anbieter} - ${draw.drawDate} (type ${draw.drawType})`,
-  )
+  log.info('User-Matching für Ziehung starten', { anbieter: draw.anbieter, drawDate: draw.drawDate, drawType: draw.drawType })
 
   const gewinne = draw.results?.gewinne ?? []
   if (gewinne.length === 0) {
-    consola.info('[Cron] No winning numbers in this draw, skipping')
+    log.info('Keine Gewinnzahlen in dieser Ziehung, überspringe')
     return
   }
 
@@ -30,7 +29,7 @@ export async function notifyUsersForDraw(draw: IDraw): Promise<void> {
   // Find active Lose whose losTyp is compatible with this draw's drawType
   const compatibleLosTypes = getCompatibleLosTypesForDraw(draw.drawType)
   if (compatibleLosTypes.length === 0) {
-    consola.info(`[Cron] No compatible losTypes for drawType ${draw.drawType}, skipping`)
+    log.info('Keine kompatiblen LosTypen für Ziehung', { drawType: draw.drawType })
     return
   }
   const lose = await Los.find({
@@ -38,7 +37,7 @@ export async function notifyUsersForDraw(draw: IDraw): Promise<void> {
     isActive: true,
     losTyp: { $in: compatibleLosTypes },
   })
-  consola.info(`[Cron] ${lose.length} compatible Lose for drawType ${draw.drawType}`)
+  log.info('Kompatible Lose gefunden', { count: lose.length, drawType: draw.drawType, compatibleLosTypes })
 
   for (const los of lose) {
     try {
@@ -86,7 +85,7 @@ export async function notifyUsersForDraw(draw: IDraw): Promise<void> {
         await checkResult.save()
       }
     } catch (error) {
-      consola.error(`[Cron] Error processing los ${los._id}:`, error)
+      log.error('Fehler bei Los-Verarbeitung', { losId: String(los._id), losNummer: los.losNummer, error: String(error) })
     }
   }
 }

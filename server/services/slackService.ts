@@ -1,4 +1,4 @@
-import { consola } from 'consola'
+const log = useO2Logger('slack')
 
 interface SlackBlock {
   type: string
@@ -19,23 +19,29 @@ export async function sendSlackNotification(
   webhookUrl: string,
   blocks: SlackBlock[],
 ): Promise<boolean> {
+  const resolvedUrl = resolveWebhookUrl(webhookUrl)
+  log.info('→ POST Slack-Webhook', { type: 'http-out', method: 'POST' })
+
+  const start = Date.now()
   try {
-    const resolvedUrl = resolveWebhookUrl(webhookUrl)
     const response = await fetch(resolvedUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ blocks }),
     })
 
+    const duration = Date.now() - start
+
     if (!response.ok) {
-      consola.error('[Slack] Webhook responded with', response.status)
+      log.error(`← POST Slack-Webhook ${response.status} (${duration}ms)`, { type: 'http-out', method: 'POST', statusCode: response.status, duration })
       return false
     }
 
-    consola.success('[Slack] Notification sent')
+    log.info(`← POST Slack-Webhook ${response.status} (${duration}ms)`, { type: 'http-out', method: 'POST', statusCode: response.status, duration })
     return true
   } catch (error) {
-    consola.error('[Slack] Failed to send:', error)
+    const duration = Date.now() - start
+    log.error(`← POST Slack-Webhook NETWORK_ERROR (${duration}ms)`, { type: 'http-out', method: 'POST', duration, error: String(error) })
     return false
   }
 }
