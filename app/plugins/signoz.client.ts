@@ -1,12 +1,8 @@
 import { WebTracerProvider } from '@opentelemetry/sdk-trace-web'
 import { BatchSpanProcessor } from '@opentelemetry/sdk-trace-base'
 import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http'
-import { Resource } from '@opentelemetry/resources'
-import {
-  ATTR_SERVICE_NAME,
-  ATTR_SERVICE_VERSION,
-  ATTR_DEPLOYMENT_ENVIRONMENT_NAME,
-} from '@opentelemetry/semantic-conventions'
+import { resourceFromAttributes } from '@opentelemetry/resources'
+import { ATTR_SERVICE_NAME, ATTR_SERVICE_VERSION } from '@opentelemetry/semantic-conventions'
 import { registerInstrumentations } from '@opentelemetry/instrumentation'
 import { DocumentLoadInstrumentation } from '@opentelemetry/instrumentation-document-load'
 import { FetchInstrumentation } from '@opentelemetry/instrumentation-fetch'
@@ -25,10 +21,10 @@ export default defineNuxtPlugin(() => {
   const env = import.meta.dev ? 'development' : 'production'
 
   const provider = new WebTracerProvider({
-    resource: new Resource({
+    resource: resourceFromAttributes({
       [ATTR_SERVICE_NAME]: 'lottozahlen',
       [ATTR_SERVICE_VERSION]: appVersion,
-      [ATTR_DEPLOYMENT_ENVIRONMENT_NAME]: env,
+      'deployment.environment.name': env,
     }),
   })
 
