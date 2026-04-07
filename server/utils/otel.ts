@@ -2,8 +2,6 @@ import { NodeSDK } from '@opentelemetry/sdk-node'
 import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http'
 import { OTLPMetricExporter } from '@opentelemetry/exporter-metrics-otlp-http'
 import { getNodeAutoInstrumentations } from '@opentelemetry/auto-instrumentations-node'
-import { resourceFromAttributes } from '@opentelemetry/resources'
-import { ATTR_SERVICE_NAME, ATTR_SERVICE_VERSION } from '@opentelemetry/semantic-conventions'
 import { PeriodicExportingMetricReader } from '@opentelemetry/sdk-metrics'
 
 let sdk: NodeSDK | null = null
@@ -23,12 +21,15 @@ export function initOtel() {
     // Fallback — Datei existiert evtl. nicht in Dev
   }
 
+  // Resource-Attribute per Env-Variable setzen (umgeht Nitro dev-mode Resolver-Bug
+  // mit @opentelemetry/resources Modul-Auflösung bei pnpm)
+  process.env.OTEL_RESOURCE_ATTRIBUTES = [
+    `service.name=lottozahlen`,
+    `service.version=${version}`,
+    `deployment.environment.name=${process.dev ? 'development' : 'production'}`,
+  ].join(',')
+
   sdk = new NodeSDK({
-    resource: resourceFromAttributes({
-      [ATTR_SERVICE_NAME]: 'lottozahlen',
-      [ATTR_SERVICE_VERSION]: version,
-      'deployment.environment.name': process.dev ? 'development' : 'production',
-    }),
     traceExporter: new OTLPTraceExporter({
       url: `${endpoint}/v1/traces`,
     }),
