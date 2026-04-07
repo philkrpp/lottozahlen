@@ -44,6 +44,9 @@ export function getAuth() {
 				expiresIn: 60 * 60 * 24 * 7,
 				updateAge: 60 * 60 * 24,
 			},
+			advanced: {
+				cookiePrefix: "lz",
+			},
 			plugins: [
 				emailOTP({
 					otpLength: 6,

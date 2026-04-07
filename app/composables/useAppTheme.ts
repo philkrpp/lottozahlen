@@ -11,7 +11,7 @@ export function useAppTheme() {
 	const { preferences, updatePreference } = useUserPreferences();
 
 	// Cookie for SSR-safe theme — lets the server render the correct theme
-	const themeCookie = useCookie<"light" | "dark">("lottozahlen-color-scheme", {
+	const themeCookie = useCookie<"light" | "dark">("lz_color-scheme", {
 		default: () => "dark",
 		maxAge: 60 * 60 * 24 * 365,
 	});

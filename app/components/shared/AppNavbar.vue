@@ -39,7 +39,7 @@
 						color="primary"
 						to="/dashboard"
 						class="ml-2"
-						prepend-icon="mdi-arrow-right"
+						append-icon="mdi-arrow-right"
 						>Zum Dashboard</v-btn
 					>
 				</template>
