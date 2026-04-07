@@ -1,0 +1,18 @@
+# Lottozahlen
+
+> Lottozahlen ist ein kostenloser Web-Service zur automatischen Pruefung
+> von Losnummern der Deutschen Fernsehlotterie. Nutzer tragen ihre
+> Losnummern ein und werden automatisch per E-Mail oder Slack
+> benachrichtigt, wenn sie gewonnen haben.
+
+## Oeffentliche Seiten
+- [Startseite](https://los.philippkrapp.de/): Uebersicht ueber den Service, Features und Registrierung
+- [Datenschutz](https://los.philippkrapp.de/datenschutz): Datenschutzerklaerung
+- [Impressum](https://los.philippkrapp.de/impressum): Impressum und Kontaktdaten
+- [AGB](https://los.philippkrapp.de/agb): Allgemeine Geschaeftsbedingungen
+
+## Features
+- Automatische Losnummern-Pruefung nach jeder Ziehung
+- Benachrichtigung per E-Mail und Slack bei Gewinn
+- Ziehungs-Historie und manuelle Quick-Checks
+- Kostenlos und ohne Kreditkarte nutzbar

@@ -1,3 +1,12 @@
+<script setup lang="ts">
+useSeoMeta({
+	title: "Impressum – Lottozahlen",
+	ogTitle: "Impressum – Lottozahlen",
+	description: "Impressum von Lottozahlen – Angaben gemäß § 5 DDG, Kontaktdaten und rechtliche Hinweise.",
+	ogDescription: "Impressum und Kontaktdaten von Lottozahlen.",
+});
+</script>
+
 <template>
 	<v-container
 		class="py-12"

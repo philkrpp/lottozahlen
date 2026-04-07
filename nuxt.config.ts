@@ -15,6 +15,19 @@ export default defineNuxtConfig({
 
 	app: {
 		head: {
+			htmlAttrs: { lang: "de" },
+			title: "Lottozahlen – Losnummern automatisch prüfen lassen",
+			meta: [
+				{
+					name: "description",
+					content:
+						"Trage deine Losnummern ein und werde automatisch benachrichtigt, wenn du gewinnst. Kostenlos, schnell und zuverlässig.",
+				},
+				{ property: "og:type", content: "website" },
+				{ property: "og:locale", content: "de_DE" },
+				{ property: "og:site_name", content: "Lottozahlen" },
+				{ name: "robots", content: "index, follow" },
+			],
 			link: [
 				{ rel: "icon", type: "image/svg+xml", href: "/favicon.svg" },
 				{ rel: "icon", type: "image/x-icon", href: "/favicon.ico" },

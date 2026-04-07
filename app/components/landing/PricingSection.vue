@@ -1,5 +1,8 @@
 <template>
-	<section class="section">
+	<section
+		id="pricing"
+		class="section"
+	>
 		<v-container class="text-center">
 			<h2 class="text-h2 font-weight-bold mb-4">Kostenlos starten</h2>
 			<p

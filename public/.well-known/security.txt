@@ -1,0 +1,3 @@
+Contact: mailto:support@philippkrapp.de
+Preferred-Languages: de, en
+Canonical: https://los.philippkrapp.de/.well-known/security.txt

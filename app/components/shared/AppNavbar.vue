@@ -27,6 +27,11 @@
 					@click="scrollTo('how-it-works')"
 					>Wie es funktioniert</v-btn
 				>
+				<v-btn
+					variant="text"
+					@click="scrollTo('pricing')"
+					>Preise</v-btn
+				>
 				<ThemeToggle class="mx-2" />
 				<template v-if="isLoggedIn">
 					<v-btn
@@ -87,6 +92,14 @@
 					"
 				>
 					<v-list-item-title>Wie es funktioniert</v-list-item-title>
+				</v-list-item>
+				<v-list-item
+					@click="
+						scrollTo('pricing');
+						drawer = false;
+					"
+				>
+					<v-list-item-title>Preise</v-list-item-title>
 				</v-list-item>
 				<v-divider class="my-2" />
 				<template v-if="isLoggedIn">

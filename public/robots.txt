@@ -1,2 +1,38 @@
-User-Agent: *
-Disallow:
+# Suchmaschinen-Crawler
+User-agent: *
+Disallow: /api/
+Disallow: /dashboard/
+Disallow: /login
+Disallow: /register
+Disallow: /forgot-password
+Disallow: /verify-email
+Disallow: /set-password
+Allow: /
+
+Sitemap: https://los.philippkrapp.de/sitemap.xml
+
+# === AI Crawler Policy ===
+
+# Tier 1: AI-Search-Crawler erlauben (senden Traffic)
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+# Tier 2: Training-Crawler erlauben
+User-agent: GPTBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+# Tier 3: Aggressive Scraper blocken
+User-agent: Bytespider
+Disallow: /
+
+User-agent: CCBot
+Disallow: /

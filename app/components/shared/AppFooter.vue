@@ -24,6 +24,29 @@
 					<p class="text-subtitle-2 font-weight-bold mb-2">Links</p>
 					<div class="d-flex flex-column">
 						<NuxtLink
+							to="/#features"
+							class="text-body-2 text-decoration-none mb-1"
+							>Features</NuxtLink
+						>
+						<NuxtLink
+							to="/#how-it-works"
+							class="text-body-2 text-decoration-none mb-1"
+							>So funktioniert's</NuxtLink
+						>
+						<NuxtLink
+							to="/#pricing"
+							class="text-body-2 text-decoration-none mb-1"
+							>Preise</NuxtLink
+						>
+					</div>
+				</v-col>
+				<v-col
+					cols="6"
+					md="4"
+				>
+					<p class="text-subtitle-2 font-weight-bold mb-2">Rechtliches</p>
+					<div class="d-flex flex-column">
+						<NuxtLink
 							to="/impressum"
 							class="text-body-2 text-decoration-none mb-1"
 							>Impressum</NuxtLink
@@ -33,7 +56,7 @@
 							class="text-body-2 text-decoration-none mb-1"
 							>Datenschutz</NuxtLink
 						>
-						<a
+<a
 							v-if="!isAuthenticated"
 							href="#"
 							class="text-body-2 text-decoration-none mb-1"
@@ -42,26 +65,30 @@
 						>
 					</div>
 				</v-col>
-				<v-col
-					cols="6"
-					md="4"
-				>
-					<p class="text-subtitle-2 font-weight-bold mb-2">Social</p>
-					<div class="d-flex ga-2">
-						<v-btn
-							icon="mdi-twitter"
-							variant="text"
-							size="small"
-						/>
-						<v-btn
-							icon="mdi-github"
-							variant="text"
-							size="small"
-						/>
-					</div>
-				</v-col>
 			</v-row>
 			<v-divider class="my-4" />
+			<div class="d-flex justify-center ga-2 mb-4">
+				<v-btn
+					icon="mdi-twitter"
+					variant="text"
+					size="small"
+				/>
+				<v-btn
+					icon="mdi-github"
+					variant="text"
+					size="small"
+				/>
+				<v-btn
+					icon="mdi-linkedin"
+					variant="text"
+					size="small"
+				/>
+				<v-btn
+					icon="mdi-instagram"
+					variant="text"
+					size="small"
+				/>
+			</div>
 			<p
 				class="text-body-2 text-center"
 				style="color: var(--v-theme-secondary)"

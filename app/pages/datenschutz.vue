@@ -1,3 +1,13 @@
+<script setup lang="ts">
+useSeoMeta({
+	title: "Datenschutzerklärung – Lottozahlen",
+	ogTitle: "Datenschutzerklärung – Lottozahlen",
+	description:
+		"Informationen zum Datenschutz bei Lottozahlen: Welche Daten wir erheben, wie wir sie verarbeiten und welche Rechte du hast.",
+	ogDescription: "Datenschutzerklärung von Lottozahlen – Transparenz über Datenverarbeitung und deine Rechte.",
+});
+</script>
+
 <template>
 	<v-container
 		class="py-12"

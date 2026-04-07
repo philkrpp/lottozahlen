@@ -6,6 +6,15 @@
 		<v-container>
 			<div class="text-center mb-12">
 				<h2 class="text-h2 font-weight-bold">Warum Lottozahlen?</h2>
+				<p
+					class="text-body-1 mt-4 mx-auto"
+					style="max-width: 700px; color: var(--v-theme-secondary)"
+				>
+					Lottozahlen ist dein persönlicher Assistent für die Deutsche Fernsehlotterie. Du trägst einmalig deine
+					Losnummer ein – wir prüfen sie nach jeder Ziehung automatisch und benachrichtigen dich sofort per E-Mail
+					oder Slack, wenn du gewonnen hast. Kein manuelles Vergleichen mehr, kein verpasster Gewinn. Der Service
+					ist komplett kostenlos, ohne Kreditkarte und in weniger als einer Minute eingerichtet.
+				</p>
 			</div>
 
 			<v-row>
