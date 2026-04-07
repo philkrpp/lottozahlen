@@ -9,6 +9,7 @@ RUN pnpm install --frozen-lockfile
 FROM base AS test
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
+COPY --from=deps /app/.nuxt ./.nuxt
 COPY . .
 RUN pnpm test:unit
 RUN pnpm build
