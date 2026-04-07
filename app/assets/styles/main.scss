@@ -1,14 +1,12 @@
-@use 'variables' as *;
-
-// Google Fonts
-@import url('https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&display=swap');
+@use "variables" as *;
+@use "cookieconsent";
 
 // Global Styles
 html,
 body {
-  font-family: $font-body;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+	font-family: $font-body;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
 }
 
 h1,
@@ -23,181 +21,191 @@ h6,
 .text-h4,
 .text-h5,
 .text-h6 {
-  font-family: $font-heading !important;
+	font-family: $font-heading !important;
 }
 
 // Theme-dependent CSS Variables
 .v-theme--dark {
-  --glass-bg: rgba(17, 24, 39, 0.6);
-  --glass-border: rgba(255, 255, 255, 0.08);
-  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-  --glow-primary: 0 0 20px rgba(0, 229, 204, 0.3);
-  --text-gradient-from: #00e5cc;
-  --text-gradient-to: #38bdf8;
-  --card-hover-bg: rgba(26, 35, 50, 0.8);
-  --navbar-bg: rgba(10, 15, 30, 0.8);
-  --sidebar-bg: rgba(17, 24, 39, 0.95);
+	--glass-bg: rgba(17, 24, 39, 0.6);
+	--glass-border: rgba(255, 255, 255, 0.08);
+	--glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+	--glow-primary: 0 0 20px rgba(0, 229, 204, 0.3);
+	--text-gradient-from: #00e5cc;
+	--text-gradient-to: #38bdf8;
+	--card-hover-bg: rgba(26, 35, 50, 0.8);
+	--navbar-bg: rgba(10, 15, 30, 0.8);
+	--sidebar-bg: rgba(17, 24, 39, 0.95);
 }
 
 .v-theme--light {
-  --glass-bg: rgba(255, 255, 255, 0.7);
-  --glass-border: rgba(0, 0, 0, 0.06);
-  --glass-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-  --glow-primary: 0 0 20px rgba(13, 148, 136, 0.15);
-  --text-gradient-from: #0d9488;
-  --text-gradient-to: #0ea5e9;
-  --card-hover-bg: rgba(249, 250, 251, 0.9);
-  --navbar-bg: rgba(255, 255, 255, 0.8);
-  --sidebar-bg: rgba(255, 255, 255, 0.95);
+	--glass-bg: rgba(255, 255, 255, 0.7);
+	--glass-border: rgba(0, 0, 0, 0.06);
+	--glass-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+	--glow-primary: 0 0 20px rgba(13, 148, 136, 0.15);
+	--text-gradient-from: #0d9488;
+	--text-gradient-to: #0ea5e9;
+	--card-hover-bg: rgba(249, 250, 251, 0.9);
+	--navbar-bg: rgba(255, 255, 255, 0.8);
+	--sidebar-bg: rgba(255, 255, 255, 0.95);
 }
 
 // Glass Card Style
 .glass-card {
-  background: var(--glass-bg) !important;
-  border: 1px solid var(--glass-border);
-  box-shadow: var(--glass-shadow);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  transition: all $transition-default;
+	background: var(--glass-bg) !important;
+	border: 1px solid var(--glass-border);
+	box-shadow: var(--glass-shadow);
+	backdrop-filter: blur(12px);
+	-webkit-backdrop-filter: blur(12px);
+	transition: all $transition-default;
 
-  &:hover {
-    background: var(--card-hover-bg) !important;
-    box-shadow: var(--glow-primary);
-  }
+	&:hover {
+		background: var(--card-hover-bg) !important;
+		box-shadow: var(--glow-primary);
+	}
 }
 
 // Text Gradient
 .text-gradient {
-  background: linear-gradient(135deg, var(--text-gradient-from), var(--text-gradient-to));
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
+	background: linear-gradient(135deg, var(--text-gradient-from), var(--text-gradient-to));
+	-webkit-background-clip: text;
+	background-clip: text;
+	-webkit-text-fill-color: transparent;
 }
 
 // Monospace for Los Numbers
 .los-nummer {
-  font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
-  font-size: 1.25rem;
-  font-weight: 600;
-  letter-spacing: 0.05em;
+	font-family: "JetBrains Mono", "Fira Code", "Courier New", monospace;
+	font-size: 1.25rem;
+	font-weight: 600;
+	letter-spacing: 0.05em;
 }
 
 // Endziffern Table
 .endziffern-table {
-  background: transparent !important;
+	background: transparent !important;
 
-  th {
-    font-size: 0.7rem !important;
-    font-weight: 600 !important;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    color: rgb(var(--v-theme-secondary)) !important;
-    border-bottom: 1px solid var(--glass-border) !important;
-  }
+	th {
+		font-size: 0.7rem !important;
+		font-weight: 600 !important;
+		text-transform: uppercase;
+		letter-spacing: 0.06em;
+		color: rgb(var(--v-theme-secondary)) !important;
+		border-bottom: 1px solid var(--glass-border) !important;
+	}
 
-  td {
-    border-bottom: 1px solid var(--glass-border) !important;
-    padding-top: 5px !important;
-    padding-bottom: 5px !important;
-  }
+	td {
+		border-bottom: 1px solid var(--glass-border) !important;
+		padding-top: 5px !important;
+		padding-bottom: 5px !important;
+	}
 
-  tr:last-child td {
-    border-bottom: none !important;
-  }
+	tr:last-child td {
+		border-bottom: none !important;
+	}
 }
 
 .endziffer-nummer {
-  font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
-  font-size: 0.9rem;
-  font-weight: 600;
-  letter-spacing: 0.12em;
-  color: rgb(var(--v-theme-primary));
-  background: rgba(var(--v-theme-primary), 0.08);
-  padding: 2px 10px;
-  border-radius: 4px;
-  display: inline-block;
+	font-family: "JetBrains Mono", "Fira Code", "Courier New", monospace;
+	font-size: 0.9rem;
+	font-weight: 600;
+	letter-spacing: 0.12em;
+	color: rgb(var(--v-theme-primary));
+	background: rgba(var(--v-theme-primary), 0.08);
+	padding: 2px 10px;
+	border-radius: 4px;
+	display: inline-block;
 }
 
 .endziffer-gewinn {
-  font-weight: 600;
-  font-size: 0.85rem;
-  white-space: nowrap;
-  color: rgb(var(--v-theme-on-surface));
+	font-weight: 600;
+	font-size: 0.85rem;
+	white-space: nowrap;
+	color: rgb(var(--v-theme-on-surface));
 }
 
 // Lotto Ball Style (deprecated — use .endziffer-nummer)
 .lotto-ball {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  font-weight: 700;
-  font-size: 0.875rem;
-  background: linear-gradient(135deg, var(--text-gradient-from), var(--text-gradient-to));
-  color: white;
-  margin: 0 4px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 40px;
+	height: 40px;
+	border-radius: 50%;
+	font-weight: 700;
+	font-size: 0.875rem;
+	background: linear-gradient(135deg, var(--text-gradient-from), var(--text-gradient-to));
+	color: white;
+	margin: 0 4px;
 }
 
 // Scrollbar Styling
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+	width: 6px;
+	height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: transparent;
+	background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(128, 128, 128, 0.3);
-  border-radius: 3px;
+	background: rgba(128, 128, 128, 0.3);
+	border-radius: 3px;
 
-  &:hover {
-    background: rgba(128, 128, 128, 0.5);
-  }
+	&:hover {
+		background: rgba(128, 128, 128, 0.5);
+	}
+}
+
+// Button Toggle — individual rounded buttons with gap
+.v-btn-toggle {
+	gap: 6px;
+
+	.v-btn {
+		border-radius: $radius-button !important;
+		border: 1px solid rgba(var(--v-border-color), var(--v-border-opacity)) !important;
+	}
 }
 
 // Page Transitions
 .page-enter-active,
 .page-leave-active {
-  transition: opacity 0.2s ease;
+	transition: opacity 0.2s ease;
 }
 
 .page-enter-from,
 .page-leave-to {
-  opacity: 0;
+	opacity: 0;
 }
 
 // Section Spacing
 .section {
-  padding: 80px 0;
+	padding: 80px 0;
 
-  @media (max-width: 960px) {
-    padding: 48px 0;
-  }
+	@media (max-width: 960px) {
+		padding: 48px 0;
+	}
 }
 
 // Tooltip Styling
 .v-tooltip > .v-overlay__content {
-  background: rgba(33, 33, 33, 0.9) !important;
-  color: #fff !important;
-  font-size: 0.75rem;
-  padding: 4px 8px;
-  border-radius: 4px;
+	background: rgba(33, 33, 33, 0.9) !important;
+	color: #fff !important;
+	font-size: 0.75rem;
+	padding: 4px 8px;
+	border-radius: 4px;
 }
 
 // Sticky Navbar with backdrop blur
 .navbar-sticky {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 1000;
-  background: var(--navbar-bg);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-bottom: 1px solid var(--glass-border);
-  transition: all $transition-default;
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	z-index: 1000;
+	background: var(--navbar-bg);
+	backdrop-filter: blur(12px);
+	-webkit-backdrop-filter: blur(12px);
+	border-bottom: 1px solid var(--glass-border);
+	transition: all $transition-default;
 }

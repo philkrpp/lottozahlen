@@ -1,7 +1,7 @@
 <template>
-  <AppFooter />
+	<AppFooter />
 </template>
 
 <script setup lang="ts">
-import AppFooter from '~/components/shared/AppFooter.vue'
+import AppFooter from "~/components/shared/AppFooter.vue";
 </script>

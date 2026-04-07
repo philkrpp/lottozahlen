@@ -1,27 +1,31 @@
-import NotificationSetting from '~~/server/models/NotificationSetting'
-import { sendTestNotification } from '~~/server/services/notificationService'
+import NotificationSetting from "~~/server/models/NotificationSetting";
+import { sendTestNotification } from "~~/server/services/notificationService";
 
-const log = useLogger('api:notifications')
+const log = useLogger("api:notifications");
 
 export default defineEventHandler(async (event) => {
-  const userId = event.context.user.id
-  const body = await readBody(event)
-  const type = body.type || 'email'
+	return withSpan("api.notifications.test", { "http.route": "/api/notifications/test" }, async (span) => {
+		const userId = event.context.user.id;
+		const body = await readBody(event);
+		const type = body.type || "email";
+		span.setAttribute("notification.type", type);
 
-  const settings = await NotificationSetting.findOne({ userId })
-  if (!settings) {
-    log.warn('Test-Benachrichtigung: keine Einstellungen', { userId })
-    throw createError({
-      statusCode: 404,
-      message: 'Keine Benachrichtigungs-Einstellungen gefunden',
-    })
-  }
+		const settings = await NotificationSetting.findOne({ userId });
+		if (!settings) {
+			log.warn("Test-Benachrichtigung: keine Einstellungen", { userId });
+			throw createError({
+				statusCode: 404,
+				message: "Keine Benachrichtigungs-Einstellungen gefunden",
+				data: { traceId: getActiveTraceId() },
+			});
+		}
 
-  log.info('Test-Benachrichtigung gestartet', { userId, type })
-  await sendTestNotification(settings, type, event.context.user)
-  log.info('Test-Benachrichtigung gesendet', { userId, type })
-  return {
-    success: true,
-    message: `Test-${type === 'email' ? 'E-Mail' : 'Slack-Nachricht'} wurde gesendet`,
-  }
-})
+		log.info("Test-Benachrichtigung gestartet", { userId, type });
+		await sendTestNotification(settings, type, event.context.user);
+		log.info("Test-Benachrichtigung gesendet", { userId, type });
+		return {
+			success: true,
+			message: `Test-${type === "email" ? "E-Mail" : "Slack-Nachricht"} wurde gesendet`,
+		};
+	});
+});

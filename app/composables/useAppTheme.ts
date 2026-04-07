@@ -1,111 +1,118 @@
-import { ref, computed, watch, onMounted } from 'vue'
-import { useTheme as useVuetifyTheme } from 'vuetify'
-import { useUserPreferences } from './useUserPreferences'
+import { ref, computed, watch, onMounted } from "vue";
+import { useTheme as useVuetifyTheme } from "vuetify";
+import { useUserPreferences } from "./useUserPreferences";
 
-type ThemeMode = 'light' | 'dark' | 'system'
+type ThemeMode = "light" | "dark" | "system";
 
-const themeMode = ref<ThemeMode>('system')
-const systemPrefersDark = ref(false)
+const themeMode = ref<ThemeMode>("system");
+const systemPrefersDark = ref(false);
 
 export function useAppTheme() {
-  const { preferences, updatePreference } = useUserPreferences()
+	const { preferences, updatePreference } = useUserPreferences();
 
-  // Call useTheme() once during setup context so inject() works
-  let vuetifyTheme: ReturnType<typeof useVuetifyTheme> | null = null
-  try {
-    vuetifyTheme = useVuetifyTheme()
-  } catch { /* ignored */ }
+	// Cookie for SSR-safe theme — lets the server render the correct theme
+	const themeCookie = useCookie<"light" | "dark">("lottozahlen-color-scheme", {
+		default: () => "dark",
+		maxAge: 60 * 60 * 24 * 365,
+	});
 
-  const isDark = computed(() => {
-    if (themeMode.value === 'system') return systemPrefersDark.value
-    return themeMode.value === 'dark'
-  })
+	let vuetifyTheme: ReturnType<typeof useVuetifyTheme> | null = null;
+	try {
+		vuetifyTheme = useVuetifyTheme();
+	} catch {
+		/* ignored */
+	}
 
-  const resolvedTheme = computed<'light' | 'dark'>(() => (isDark.value ? 'dark' : 'light'))
+	// Apply cookie-based theme immediately during setup (SSR + client)
+	if (vuetifyTheme && themeCookie.value) {
+		vuetifyTheme.change(themeCookie.value);
+	}
 
-  // Vue Bits theme-aware colors
-  const vueBitsColors = computed(() => ({
-    auroraColors: isDark.value
-      ? ['#0A0F1E', '#00E5CC', '#38BDF8']
-      : ['#FAFBFC', '#0D9488', '#0EA5E9'],
-    particleColor: isDark.value ? '#00E5CC' : '#0D9488',
-    gradientFrom: isDark.value ? '#00e5cc' : '#0d9488',
-    gradientTo: isDark.value ? '#38bdf8' : '#0ea5e9',
-  }))
+	const isDark = computed(() => {
+		if (themeMode.value === "system") return systemPrefersDark.value;
+		return themeMode.value === "dark";
+	});
 
-  function applyTheme() {
-    if (vuetifyTheme) {
-      vuetifyTheme.change(resolvedTheme.value)
-    }
-  }
+	const resolvedTheme = computed<"light" | "dark">(() => (isDark.value ? "dark" : "light"));
 
-  function setTheme(mode: ThemeMode) {
-    themeMode.value = mode
-    updatePreference('theme', mode)
-    applyTheme()
-  }
+	// Vue Bits theme-aware colors
+	const vueBitsColors = computed(() => ({
+		auroraColors: isDark.value ? ["#0A0F1E", "#00E5CC", "#38BDF8"] : ["#FAFBFC", "#0D9488", "#0EA5E9"],
+		particleColor: isDark.value ? "#00E5CC" : "#0D9488",
+		gradientFrom: isDark.value ? "#00e5cc" : "#0d9488",
+		gradientTo: isDark.value ? "#38bdf8" : "#0ea5e9",
+	}));
 
-  function toggleTheme() {
-    setTheme(isDark.value ? 'light' : 'dark')
-  }
+	function applyTheme() {
+		if (vuetifyTheme) {
+			vuetifyTheme.change(resolvedTheme.value);
+		}
+		themeCookie.value = resolvedTheme.value;
+	}
 
-  function initTheme() {
-    // Load from preferences
-    if (preferences.value.theme) {
-      themeMode.value = preferences.value.theme
-    } else {
-      // Try localStorage for non-authenticated users
-      try {
-        const stored = localStorage.getItem('lottozahlen-theme')
-        if (stored && ['light', 'dark', 'system'].includes(stored)) {
-          themeMode.value = stored as ThemeMode
-        }
-      } catch { /* ignored */ }
-    }
+	function setTheme(mode: ThemeMode) {
+		themeMode.value = mode;
+		updatePreference("theme", mode);
+		applyTheme();
+	}
 
-    // Listen for system preference changes
-    if (typeof window !== 'undefined') {
-      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
-      systemPrefersDark.value = mediaQuery.matches
+	function toggleTheme() {
+		setTheme(isDark.value ? "light" : "dark");
+	}
 
-      mediaQuery.addEventListener('change', (e) => {
-        systemPrefersDark.value = e.matches
-        if (themeMode.value === 'system') {
-          applyTheme()
-        }
-      })
-    }
+	function initTheme() {
+		// Read persisted theme synchronously from localStorage
+		// (reactive preferences may not be loaded from API yet)
+		try {
+			const stored = localStorage.getItem("lottozahlen-preferences");
+			if (stored) {
+				const parsed = JSON.parse(stored);
+				if (parsed.theme && ["light", "dark", "system"].includes(parsed.theme)) {
+					themeMode.value = parsed.theme;
+				}
+			}
+		} catch {
+			/* ignored */
+		}
 
-    applyTheme()
-  }
+		// Listen for system preference changes
+		if (typeof window !== "undefined") {
+			const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+			systemPrefersDark.value = mediaQuery.matches;
 
-  // Watch for preference changes
-  watch(
-    () => preferences.value.theme,
-    (newTheme) => {
-      if (newTheme && newTheme !== themeMode.value) {
-        themeMode.value = newTheme
-        applyTheme()
-      }
-    },
-  )
+			mediaQuery.addEventListener("change", (e) => {
+				systemPrefersDark.value = e.matches;
+				if (themeMode.value === "system") {
+					applyTheme();
+				}
+			});
+		}
 
-  // Watch resolved theme to apply
-  watch(resolvedTheme, () => {
-    applyTheme()
-  })
+		applyTheme();
+	}
 
-  onMounted(() => {
-    initTheme()
-  })
+	// Watch for preference changes (e.g., loaded async from server)
+	watch(
+		() => preferences.value.theme,
+		(newTheme) => {
+			if (newTheme && newTheme !== themeMode.value) {
+				themeMode.value = newTheme;
+				applyTheme();
+			}
+		},
+	);
 
-  return {
-    theme: themeMode,
-    isDark,
-    resolvedTheme,
-    vueBitsColors,
-    setTheme,
-    toggleTheme,
-    initTheme,
-  }
+	onMounted(() => {
+		initTheme();
+	});
+
+	return {
+		theme: themeMode,
+		isDark,
+		resolvedTheme,
+		vueBitsColors,
+		setTheme,
+		toggleTheme,
+		initTheme,
+	};
 }

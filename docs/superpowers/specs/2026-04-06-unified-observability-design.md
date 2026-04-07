@@ -30,12 +30,14 @@ Pino rootLogger
 ```
 
 OTEL Log Stream:
+
 - Parst Pino JSON, transformiert in OTLP Log-Format
 - Batch-Buffer analog zu O2 (Flush-Interval 5s, Max-Buffer 50)
 - Sendet per `fetch` an `${OTEL_EXPORTER_OTLP_ENDPOINT}/v1/logs`
 - Fallback-Buffer bei Fehlern (max 500 Einträge)
 
 API (umbenannt, identische Signatur):
+
 - `useO2Logger(module)` → `useLogger(module)`
 - `flushO2Logs()` → `flushLogs()`
 - `rootLogger` Export bleibt
@@ -62,6 +64,7 @@ Exportiert `shutdownOtel()` für Graceful Shutdown.
 ### 4. `server/plugins/01.error-handler.ts` (ersetzt `o2-error-handler.ts`)
 
 Identische Logik, nur umbenannt:
+
 - `useO2Logger` → `useLogger`
 - `flushO2Logs` → `flushLogs`
 - Nummerierung `01.` damit es nach OTEL-Init läuft
@@ -113,11 +116,11 @@ Läuft parallel zu O2 RUM Plugin und Sentry Browser — unabhängig.
 Einheitliche Client-API die an alle Backends dispatched:
 
 ```ts
-setUser(user)           // → O2 RUM + Sentry.setUser + OTEL Resource
-clearUser()             // → O2 clearUser + Sentry.setUser(null)
-trackAction(name, ctx)  // → O2 RUM addAction + OTEL Span
-trackError(msg, ctx)    // → O2 Logs error + Sentry captureMessage + OTEL Span
-trackInfo(msg, ctx)     // → O2 Logs info + OTEL Span
+setUser(user); // → O2 RUM + Sentry.setUser + OTEL Resource
+clearUser(); // → O2 clearUser + Sentry.setUser(null)
+trackAction(name, ctx); // → O2 RUM addAction + OTEL Span
+trackError(msg, ctx); // → O2 Logs error + Sentry captureMessage + OTEL Span
+trackInfo(msg, ctx); // → O2 Logs info + OTEL Span
 ```
 
 Jedes Backend ist optional (graceful no-op wenn Provider nicht verfügbar). Neues Backend = eine Zeile pro Methode.
@@ -125,22 +128,24 @@ Jedes Backend ist optional (graceful no-op wenn Provider nicht verfügbar). Neue
 ### 10. `types/observability.d.ts` (ersetzt `types/openobserve.d.ts`)
 
 Erweitert NuxtApp und ComponentCustomProperties um:
+
 - `$o2Rum` (bestehend)
 - `$o2Logs` (bestehend)
 - `$otelTracer` (NEU)
 
 ## Renames (22+ Dateien)
 
-| Alt | Neu |
-|-----|-----|
-| `server/utils/o2.ts` | `server/utils/logger.ts` |
-| `useO2Logger()` | `useLogger()` |
-| `flushO2Logs()` | `flushLogs()` |
-| `app/composables/useO2.ts` | `app/composables/useObservability.ts` |
-| `server/plugins/o2-error-handler.ts` | `server/plugins/01.error-handler.ts` |
-| `types/openobserve.d.ts` | `types/observability.d.ts` |
+| Alt                                  | Neu                                   |
+| ------------------------------------ | ------------------------------------- |
+| `server/utils/o2.ts`                 | `server/utils/logger.ts`              |
+| `useO2Logger()`                      | `useLogger()`                         |
+| `flushO2Logs()`                      | `flushLogs()`                         |
+| `app/composables/useO2.ts`           | `app/composables/useObservability.ts` |
+| `server/plugins/o2-error-handler.ts` | `server/plugins/01.error-handler.ts`  |
+| `types/openobserve.d.ts`             | `types/observability.d.ts`            |
 
 Betroffene Dateien für `useO2Logger` → `useLogger`:
+
 - `server/cron/checkDrawResults.ts`
 - `server/cron/index.ts`
 - `server/cron/notifyUsers.ts`
@@ -166,6 +171,7 @@ Betroffene Dateien für `useO2Logger` → `useLogger`:
 ## Neue Packages
 
 **Server (dependencies):**
+
 - `@opentelemetry/sdk-node`
 - `@opentelemetry/auto-instrumentations-node`
 - `@opentelemetry/exporter-trace-otlp-http`
@@ -175,6 +181,7 @@ Betroffene Dateien für `useO2Logger` → `useLogger`:
 - `@opentelemetry/semantic-conventions`
 
 **Browser (dependencies):**
+
 - `@opentelemetry/api`
 - `@opentelemetry/sdk-trace-web`
 - `@opentelemetry/instrumentation-document-load`

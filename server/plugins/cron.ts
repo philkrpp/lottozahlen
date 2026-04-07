@@ -1,5 +1,5 @@
-import { registerCronJobs } from '~~/server/cron'
+import { registerCronJobs } from "~~/server/cron";
 
 export default defineNitroPlugin(() => {
-  registerCronJobs()
-})
+	registerCronJobs();
+});

@@ -1,22 +1,25 @@
-import Los from '~~/server/models/Los'
+import Los from "~~/server/models/Los";
 
-const log = useLogger('api:los')
+const log = useLogger("api:los");
 
 export default defineEventHandler(async (event) => {
-  const userId = event.context.user.id
-  const losId = getRouterParam(event, 'id')
+	return withSpan("api.los.delete", { "http.route": "/api/los/:id" }, async (span) => {
+		const userId = event.context.user.id;
+		const losId = getRouterParam(event, "id");
+		span.setAttribute("los.id", losId || "");
 
-  const los = await Los.findOneAndUpdate(
-    { _id: losId, userId },
-    { $set: { isActive: false } },
-    { returnDocument: 'after' },
-  )
+		const los = await Los.findOneAndUpdate(
+			{ _id: losId, userId },
+			{ $set: { isActive: false } },
+			{ returnDocument: "after" },
+		);
 
-  if (!los) {
-    log.warn('Los nicht gefunden bei Deaktivierung', { userId, losId })
-    throw createError({ statusCode: 404, message: 'Los nicht gefunden' })
-  }
+		if (!los) {
+			log.warn("Los nicht gefunden bei Deaktivierung", { userId, losId });
+			throw createError({ statusCode: 404, message: "Los nicht gefunden", data: { traceId: getActiveTraceId() } });
+		}
 
-  log.info('Los deaktiviert', { userId, losId, losNummer: los.losNummer })
-  return los
-})
+		log.info("Los deaktiviert", { userId, losId, losNummer: los.losNummer });
+		return los;
+	});
+});

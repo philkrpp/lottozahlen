@@ -1,38 +1,42 @@
 export default defineNitroPlugin((nitroApp) => {
-  const log = useLogger('nitro')
+	const log = useLogger("nitro");
 
-  // --- Unhandled Errors in Nitro ---
-  nitroApp.hooks.hook('error', (error, { event }) => {
-    const url = event ? getRequestURL(event).pathname : 'unknown'
-    const method = event ? getMethod(event) : 'unknown'
+	// --- Unhandled Errors in Nitro ---
+	nitroApp.hooks.hook("error", (error, { event }) => {
+		const url = event ? getRequestURL(event).pathname : "unknown";
+		const method = event ? getMethod(event) : "unknown";
+		const traceId = getActiveTraceId();
 
-    log.error(`Server Error: ${error.message}`, {
-      path: url,
-      method,
-      stack: error.stack || '',
-      name: error.name,
-      type: 'unhandled_error',
-    })
-  })
+		log.error(`Server Error: ${error.message}`, {
+			path: url,
+			method,
+			type: "unhandled_error",
+			...(traceId && { traceId }),
+		}, error);
 
-  // --- Process-Level Errors ---
-  process.on('unhandledRejection', (reason: any) => {
-    log.fatal(`Unhandled Rejection: ${reason?.message || reason}`, {
-      stack: reason?.stack || '',
-      type: 'unhandled_rejection',
-    })
-  })
+		// Trace-ID an Response-Header anhaengen
+		if (event && traceId) {
+			setHeader(event, "x-trace-id", traceId);
+		}
+	});
 
-  process.on('uncaughtException', (error) => {
-    log.fatal(`Uncaught Exception: ${error.message}`, {
-      stack: error.stack || '',
-      type: 'uncaught_exception',
-    })
-  })
+	// --- Process-Level Errors ---
+	process.on("unhandledRejection", (reason: unknown) => {
+		const err = reason instanceof Error ? reason : new Error(String(reason));
+		log.fatal(`Unhandled Rejection: ${err.message}`, {
+			type: "unhandled_rejection",
+		}, err);
+	});
 
-  // --- Graceful Shutdown: Logs flushen vor dem Beenden ---
-  nitroApp.hooks.hook('close', async () => {
-    log.info('Server wird heruntergefahren — Logs werden geflusht.')
-    await flushLogs()
-  })
-})
+	process.on("uncaughtException", (error) => {
+		log.fatal(`Uncaught Exception: ${error.message}`, {
+			type: "uncaught_exception",
+		}, error);
+	});
+
+	// --- Graceful Shutdown: Logs flushen vor dem Beenden ---
+	nitroApp.hooks.hook("close", async () => {
+		log.info("Server wird heruntergefahren — Logs werden geflusht.");
+		await flushLogs();
+	});
+});

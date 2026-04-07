@@ -1,11 +1,11 @@
 <template>
-  <SetPasswordForm />
+	<SetPasswordForm />
 </template>
 
 <script setup lang="ts">
-import SetPasswordForm from '~/components/auth/SetPasswordForm.vue'
+import SetPasswordForm from "~/components/auth/SetPasswordForm.vue";
 
 definePageMeta({
-  layout: 'auth',
-})
+	layout: "auth",
+});
 </script>

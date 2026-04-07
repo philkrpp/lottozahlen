@@ -1,16 +1,14 @@
-import * as Sentry from '@sentry/nuxt'
-import { release } from './build-release.json'
+import * as Sentry from "@sentry/nuxt";
+import { release } from "./build-release.json";
 
-const dsn = useRuntimeConfig().public.sentryDsn
+const config = useRuntimeConfig();
+const dsn = config.public.sentryDsn;
 
 if (dsn) {
-  Sentry.init({
-    dsn,
-    release,
-    tracesSampleRate: 1.0,
-    integrations: [
-      Sentry.browserTracingIntegration(),
-      Sentry.captureConsoleIntegration({ levels: ['log', 'warn', 'error'] }),
-    ],
-  })
+	Sentry.init({
+		dsn,
+		release,
+		tracesSampleRate: config.public.sentryTracesSampleRate ?? 1.0,
+		integrations: [Sentry.browserTracingIntegration()],
+	});
 }

@@ -1,0 +1,90 @@
+// CookieConsent Theme Override — Glassmorphism
+// Matches the landing page's glass-card aesthetic
+
+#cc-main {
+	font-family: "Sora", sans-serif;
+
+	// Base overrides
+	--cc-font-family: "Sora", sans-serif;
+	--cc-modal-border-radius: 16px;
+	--cc-btn-border-radius: 12px;
+	--cc-modal-transition-duration: 0.3s;
+}
+
+// Dark theme
+.v-theme--dark #cc-main {
+	--cc-bg: rgba(17, 24, 39, 0.85);
+	--cc-primary-color: #f1f5f9;
+	--cc-secondary-color: #94a3b8;
+
+	--cc-btn-primary-bg: #00e5cc;
+	--cc-btn-primary-color: #0a0f1e;
+	--cc-btn-primary-border-color: #00e5cc;
+	--cc-btn-primary-hover-bg: #00ccb5;
+	--cc-btn-primary-hover-color: #0a0f1e;
+	--cc-btn-primary-hover-border-color: #00ccb5;
+
+	--cc-btn-secondary-bg: transparent;
+	--cc-btn-secondary-color: #f1f5f9;
+	--cc-btn-secondary-border-color: rgba(255, 255, 255, 0.15);
+	--cc-btn-secondary-hover-bg: rgba(255, 255, 255, 0.08);
+	--cc-btn-secondary-hover-color: #f1f5f9;
+	--cc-btn-secondary-hover-border-color: rgba(255, 255, 255, 0.25);
+
+	--cc-separator-border-color: rgba(255, 255, 255, 0.08);
+	--cc-toggle-on-bg: #00e5cc;
+	--cc-toggle-off-bg: rgba(255, 255, 255, 0.15);
+	--cc-toggle-readonly-bg: #374151;
+	--cc-toggle-readonly-knob-bg: #9ca3af;
+	--cc-overlay-bg: rgba(0, 0, 0, 0.65);
+	--cc-cookie-category-block-bg: rgba(255, 255, 255, 0.04);
+	--cc-cookie-category-block-hover-bg: rgba(255, 255, 255, 0.08);
+	--cc-section-border: rgba(255, 255, 255, 0.06);
+
+	.cm,
+	.pm {
+		backdrop-filter: blur(16px);
+		-webkit-backdrop-filter: blur(16px);
+		border: 1px solid rgba(255, 255, 255, 0.08);
+		box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+	}
+}
+
+// Light theme
+.v-theme--light #cc-main {
+	--cc-bg: rgba(255, 255, 255, 0.85);
+	--cc-primary-color: #1e293b;
+	--cc-secondary-color: #64748b;
+
+	--cc-btn-primary-bg: #0d9488;
+	--cc-btn-primary-color: #ffffff;
+	--cc-btn-primary-border-color: #0d9488;
+	--cc-btn-primary-hover-bg: #0f766e;
+	--cc-btn-primary-hover-color: #ffffff;
+	--cc-btn-primary-hover-border-color: #0f766e;
+
+	--cc-btn-secondary-bg: transparent;
+	--cc-btn-secondary-color: #1e293b;
+	--cc-btn-secondary-border-color: rgba(0, 0, 0, 0.12);
+	--cc-btn-secondary-hover-bg: rgba(0, 0, 0, 0.04);
+	--cc-btn-secondary-hover-color: #1e293b;
+	--cc-btn-secondary-hover-border-color: rgba(0, 0, 0, 0.2);
+
+	--cc-separator-border-color: rgba(0, 0, 0, 0.06);
+	--cc-toggle-on-bg: #0d9488;
+	--cc-toggle-off-bg: rgba(0, 0, 0, 0.15);
+	--cc-toggle-readonly-bg: #e2e8f0;
+	--cc-toggle-readonly-knob-bg: #94a3b8;
+	--cc-overlay-bg: rgba(0, 0, 0, 0.35);
+	--cc-cookie-category-block-bg: rgba(0, 0, 0, 0.03);
+	--cc-cookie-category-block-hover-bg: rgba(0, 0, 0, 0.06);
+	--cc-section-border: rgba(0, 0, 0, 0.06);
+
+	.cm,
+	.pm {
+		backdrop-filter: blur(16px);
+		-webkit-backdrop-filter: blur(16px);
+		border: 1px solid rgba(0, 0, 0, 0.06);
+		box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+	}
+}
