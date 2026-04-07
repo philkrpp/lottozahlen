@@ -6,13 +6,18 @@
 	"scripts": {
 		"build": "nuxt build",
 		"dev": "nuxt dev",
-		"generate": "nuxt generate",
-		"preview": "nuxt preview",
-		"postinstall": "nuxt prepare",
+		"docker:build": "docker build -t lottozahlen .",
 		"format": "prettier --cache --write .",
 		"format:check": "prettier --cache --check .",
+		"generate": "nuxt generate",
 		"lint": "eslint . --cache",
-		"lint:fix": "eslint . --cache --fix"
+		"lint:fix": "eslint . --cache --fix",
+		"postinstall": "nuxt prepare",
+		"preview": "nuxt preview",
+		"test": "vitest run",
+		"test:e2e": "vitest run --project e2e",
+		"test:unit": "vitest run --project unit",
+		"test:watch": "vitest --project unit"
 	},
 	"dependencies": {
 		"@mdi/font": "^7.4.47",
@@ -61,11 +66,16 @@
 	},
 	"devDependencies": {
 		"@nuxt/eslint": "^1.15.2",
+		"@nuxt/test-utils": "^4.0.0",
+		"@playwright/test": "^1.59.1",
 		"@types/nodemailer": "^7.0.11",
 		"eslint": "^10.1.0",
+		"happy-dom": "^20.8.9",
 		"jsrepo": "^3.7.0",
+		"playwright-core": "^1.59.1",
 		"prettier": "^3.8.1",
 		"typescript": "^6.0.2",
+		"vitest": "^4.1.3",
 		"vuetify-nuxt-module": "^0.19.5"
 	}
 }

@@ -3,7 +3,7 @@ import { version } from "./package.json";
 
 const isDev = process.env.NODE_ENV !== "production";
 const buildTimestamp = new Date().toISOString().replace(/[-:]/g, "").replace("T", "-").slice(0, 15);
-const appRelease = isDev ? `${version}-dev` : `${version}+${buildTimestamp}`;
+const appRelease = isDev ? `${version}-dev` : `${version}-${buildTimestamp}`;
 
 writeFileSync("./build-release.json", JSON.stringify({ release: appRelease }));
 

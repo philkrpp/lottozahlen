@@ -6,16 +6,17 @@ WORKDIR /app
 COPY package.json pnpm-lock.yaml ./
 RUN pnpm install --frozen-lockfile
 
-FROM base AS build
+FROM base AS test
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
+RUN pnpm test:unit
 RUN pnpm build
 
 FROM base AS production
 RUN apk add --no-cache curl
 WORKDIR /app
-COPY --from=build /app/.output ./.output
+COPY --from=test /app/.output ./.output
 ENV NODE_ENV=production
 ENV NITRO_PORT=3000
 EXPOSE 3000

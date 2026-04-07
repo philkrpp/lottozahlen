@@ -1,90 +1,69 @@
+import { reportError } from "~/utils/report-error";
 import { createLogger } from "~/utils/logger";
-import { trace, context, SpanStatusCode } from "@opentelemetry/api";
 
 const log = createLogger("error");
 
-// --- Error-Deduplizierung ---
-const recentErrors = new Map<string, number>();
-
-function getErrorFingerprint(message: string, type: string, stack?: string): string {
-	const stackLine = stack?.split("\n")[1]?.trim() || "";
-	return `${type}:${message}:${stackLine}`;
-}
-
-function isDuplicate(fingerprint: string, dedupWindowMs: number): boolean {
-	const lastSeen = recentErrors.get(fingerprint);
-	const now = Date.now();
-	if (lastSeen && now - lastSeen < dedupWindowMs) return true;
-	recentErrors.set(fingerprint, now);
-	// Alte Eintraege bereinigen
-	if (recentErrors.size > 100) {
-		for (const [key, ts] of recentErrors) {
-			if (now - ts > dedupWindowMs) recentErrors.delete(key);
-		}
+function safeStringify(value: unknown): string {
+	try {
+		return JSON.stringify(value);
+	} catch {
+		return String(value);
 	}
-	return false;
 }
 
-export default defineNuxtPlugin((nuxtApp) => {
-	const dedupWindowMs = useRuntimeConfig().public.errorDedupWindowMs ?? 5000;
+export default defineNuxtPlugin({
+	name: "error-tracking",
+	dependsOn: ["openobserve", "otel"],
+	setup(nuxtApp) {
+		// Vue Error Handler — faengt alle Errors in Vue-Komponenten
+		nuxtApp.vueApp.config.errorHandler = (error, instance, info) => {
+			const message = error instanceof Error ? error.message : String(error);
+			reportError("vue", message, error, {
+				component: instance?.$options?.name || "unknown",
+				info,
+				type: "vue_error",
+			});
+		};
 
-	// Vue Error Handler — faengt alle Errors in Vue-Komponenten
-	nuxtApp.vueApp.config.errorHandler = (error, instance, info) => {
-		const err = error as Error;
-		const fingerprint = getErrorFingerprint(err.message, "vue_error", err.stack);
-		if (isDuplicate(fingerprint, dedupWindowMs)) return;
-
-		log.error(err.message, {
-			stack: err.stack,
-			component: instance?.$options?.name || "unknown",
-			info,
-			type: "vue_error",
+		// Unhandled Promise Rejections
+		window.addEventListener("unhandledrejection", (event) => {
+			const reason = event.reason;
+			reportError("global", reason?.message || "Unhandled Promise Rejection", reason ?? "unknown", {
+				type: "unhandled_rejection",
+			});
 		});
 
-		const span = trace.getSpan(context.active());
-		if (span) {
-			span.setStatus({ code: SpanStatusCode.ERROR, message: err.message });
-			span.recordException(err);
-		}
-	};
-
-	// Unhandled Promise Rejections
-	window.addEventListener("unhandledrejection", (event) => {
-		const reason = event.reason;
-		const message = reason?.message || "Unhandled Promise Rejection";
-		const fingerprint = getErrorFingerprint(message, "unhandled_rejection", reason?.stack);
-		if (isDuplicate(fingerprint, dedupWindowMs)) return;
-
-		log.error(message, {
-			stack: reason?.stack,
-			type: "unhandled_rejection",
+		// Uncaught Exceptions
+		window.addEventListener("error", (event) => {
+			if (!event.filename) return;
+			reportError("global", event.message, event.error ?? event.message, {
+				filename: event.filename,
+				lineno: event.lineno,
+				colno: event.colno,
+				type: "uncaught_exception",
+			});
 		});
 
-		const span = trace.getSpan(context.active());
-		if (span) {
-			span.setStatus({ code: SpanStatusCode.ERROR, message });
-			if (reason instanceof Error) span.recordException(reason);
-		}
-	});
+		// Console Override: Third-Party console.error/warn durch Logger routen.
+		// Eigene Logs starten mit "[" (z.B. "[Logger]", "[O2]") und werden nicht doppelt erfasst.
+		const originalConsoleError = console.error;
+		console.error = (...args: unknown[]) => {
+			originalConsoleError.apply(console, args);
+			const first = typeof args[0] === "string" ? args[0] : "";
+			if (!first.startsWith("[")) {
+				const message = args.map((a) => (typeof a === "string" ? a : safeStringify(a))).join(" ");
+				log.error(message, { type: "third_party_console_error" });
+			}
+		};
 
-	// Uncaught Exceptions
-	window.addEventListener("error", (event) => {
-		if (!event.filename) return;
-
-		const fingerprint = getErrorFingerprint(event.message, "uncaught_exception", `${event.filename}:${event.lineno}`);
-		if (isDuplicate(fingerprint, dedupWindowMs)) return;
-
-		log.error(event.message, {
-			filename: event.filename,
-			lineno: event.lineno,
-			colno: event.colno,
-			type: "uncaught_exception",
-		});
-
-		const span = trace.getSpan(context.active());
-		if (span) {
-			span.setStatus({ code: SpanStatusCode.ERROR, message: event.message });
-			if (event.error instanceof Error) span.recordException(event.error);
-		}
-	});
+		const originalConsoleWarn = console.warn;
+		console.warn = (...args: unknown[]) => {
+			originalConsoleWarn.apply(console, args);
+			const first = typeof args[0] === "string" ? args[0] : "";
+			if (!first.startsWith("[")) {
+				const message = args.map((a) => (typeof a === "string" ? a : safeStringify(a))).join(" ");
+				log.warn(message, { type: "third_party_console_warn" });
+			}
+		};
+	},
 });

@@ -30,3 +30,7 @@ logs
 build-release.json
 
 .playwright-mcp
+
+# Test artifacts
+coverage/
+test-results/
