@@ -35,7 +35,7 @@ export function initOtel() {
 	process.env.OTEL_RESOURCE_ATTRIBUTES = [
 		`service.name=${process.env.OTEL_SERVICE_NAME || "lottozahlen"}-backend`,
 		`service.version=${version}`,
-		`deployment.environment.name=${isDev ? "development" : "production"}`,
+		`deployment.environment.name=${process.env.APP_ENV || "development"}`,
 	].join(",");
 
 	const traceExporter = endpoint ? new OTLPTraceExporter({ url: `${endpoint}/v1/traces` }) : new ConsoleSpanExporter();

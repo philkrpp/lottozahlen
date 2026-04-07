@@ -63,9 +63,10 @@ export default defineEventHandler(async (event) => {
 
 	let body: { logs: FrontendLogEntry[] } | undefined;
 	try {
-		body = await readBody<{ logs: FrontendLogEntry[] }>(event);
+		const raw = await readBody<{ logs: FrontendLogEntry[] } | string>(event);
+		body = typeof raw === "string" ? JSON.parse(raw) : raw;
 	} catch {
-		// Connection aborted (e.g. browser navigated away) — silently discard
+		// Connection aborted or unparseable body — silently discard
 		return { status: "ok", received: 0 };
 	}
 

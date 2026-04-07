@@ -8,6 +8,7 @@ if (dsn) {
 	Sentry.init({
 		dsn,
 		release,
+		environment: config.public.appEnv || "development",
 		tracesSampleRate: config.public.sentryTracesSampleRate ?? 1.0,
 		integrations: [Sentry.browserTracingIntegration()],
 	});

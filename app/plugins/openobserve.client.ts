@@ -22,7 +22,7 @@ export default defineNuxtPlugin({
 
 		const serviceName = `${o2ServiceName || "lottozahlen"}-frontend`;
 		const version = appVersion;
-		const env = import.meta.dev ? "development" : "production";
+		const env = config.public.appEnv || "development";
 
 		openobserveRum.init({
 			applicationId: serviceName,

@@ -7,6 +7,7 @@ if (dsn) {
 	Sentry.init({
 		dsn,
 		release,
+		environment: process.env.APP_ENV || "development",
 		tracesSampleRate: parseFloat(process.env.SENTRY_TRACES_SAMPLE_RATE || "100") / 100,
 	});
 }

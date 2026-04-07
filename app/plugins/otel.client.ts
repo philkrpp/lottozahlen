@@ -16,15 +16,13 @@ export default defineNuxtPlugin({
 	name: "otel",
 	setup() {
 		const config = useRuntimeConfig();
-		const isDev = import.meta.dev;
-
 		// Traces gehen an eigene API-Route, NICHT direkt an SigNoz
 		const collectorUrl = "/api/telemetry/traces";
 
 		const resource = resourceFromAttributes({
 			[ATTR_SERVICE_NAME]: `${config.public.otelServiceName || "lottozahlen"}-frontend`,
 			[ATTR_SERVICE_VERSION]: config.public.appVersion || "1.0.0",
-			"deployment.environment": isDev ? "development" : "production",
+			"deployment.environment": config.public.appEnv || "development",
 			"browser.language": navigator.language,
 			"session.id": getSessionId(),
 		});

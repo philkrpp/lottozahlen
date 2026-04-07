@@ -102,7 +102,7 @@ async function flushOtelBuffer() {
 		{ key: "service.version", value: { stringValue: config.public.appVersion } },
 		{
 			key: "deployment.environment.name",
-			value: { stringValue: import.meta.dev ? "development" : "production" },
+			value: { stringValue: config.appEnv || "development" },
 		},
 	];
 
@@ -184,7 +184,7 @@ function createO2Stream(): Writable | null {
 					module: logObj.module || "",
 					service: `${process.env.NUXT_PUBLIC_O2_SERVICE_NAME || "lottozahlen"}-backend`,
 					version: process.env.NUXT_PUBLIC_APP_VERSION || "unknown",
-					env: import.meta.dev ? "development" : "production",
+					env: process.env.APP_ENV || "development",
 					component: "server",
 					// Trace-Korrelation vom Pino-Mixin
 					...(logObj.trace_id && {

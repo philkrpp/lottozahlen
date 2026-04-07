@@ -1,9 +1,9 @@
 import { writeFileSync } from "node:fs";
 import { version } from "./package.json";
 
-const isDev = process.env.NODE_ENV !== "production";
+const isDev = process.env.APP_ENV !== "production";
 const buildTimestamp = new Date().toISOString().replace(/[-:]/g, "").replace("T", "-").slice(0, 15);
-const appRelease = isDev ? `${version}-dev` : `${version}-${buildTimestamp}`;
+const appRelease = isDev ? `${version}-${buildTimestamp}` : version;
 
 writeFileSync("./build-release.json", JSON.stringify({ release: appRelease }));
 
@@ -46,6 +46,7 @@ export default defineNuxtConfig({
 	},
 
 	runtimeConfig: {
+		appEnv: process.env.APP_ENV || "development",
 		mongodbUri: process.env.MONGODB_URI || "mongodb://localhost:27017/lottozahlen",
 		betterAuthSecret: process.env.BETTER_AUTH_SECRET,
 		betterAuthUrl: process.env.BETTER_AUTH_URL || "http://localhost:3000",
@@ -69,10 +70,10 @@ export default defineNuxtConfig({
 		logFlushFailureThreshold: parseInt(process.env.LOG_FLUSH_FAILURE_THRESHOLD || "3"),
 		sentryTracesSampleRate: parseFloat(process.env.SENTRY_TRACES_SAMPLE_RATE || "100") / 100,
 		public: {
+			appEnv: process.env.APP_ENV || "development",
 			appName: process.env.NUXT_PUBLIC_APP_NAME || "Lottozahlen",
 			appUrl: process.env.NUXT_PUBLIC_APP_URL || "http://localhost:3000",
 			appVersion: appRelease,
-			nodeEnv: process.env.NODE_ENV || "development",
 			o2ClientToken: process.env.NUXT_PUBLIC_O2_CLIENT_TOKEN || "",
 			o2Org: process.env.NUXT_PUBLIC_O2_ORG || "default",
 			o2PrivacyLevel: process.env.NUXT_PUBLIC_O2_PRIVACY_LEVEL || "mask-user-input",

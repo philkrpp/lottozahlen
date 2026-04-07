@@ -136,7 +136,8 @@ if (typeof window !== "undefined") {
 		if (document.visibilityState === "hidden") {
 			if (LOG_BUFFER.length > 0) {
 				const logsToSend = LOG_BUFFER.splice(0);
-				const queued = navigator.sendBeacon("/api/telemetry/logs", JSON.stringify({ logs: logsToSend }));
+				const blob = new Blob([JSON.stringify({ logs: logsToSend })], { type: "application/json" });
+				const queued = navigator.sendBeacon("/api/telemetry/logs", blob);
 				if (!queued) {
 					console.warn("[Logger] sendBeacon fehlgeschlagen — Logs gehen moeglicherweise verloren");
 				}
