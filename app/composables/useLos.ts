@@ -113,15 +113,14 @@ export function useLos() {
 		isChecking.value = id;
 		log.info("Quick-Check gestartet", { losId: id });
 		try {
-			const result = await $fetch<{ los: Los; results: LosCheckResult[] }>(`/api/los/${id}/check`, {
+			const result = await $fetch<{ los: Los; result: LosCheckResult }>(`/api/los/${id}/check`, {
 				method: "POST",
 			});
-			// Update the los in the list
 			const index = lose.value.findIndex((l) => l._id === id);
 			if (index !== -1) lose.value[index] = result.los;
 			success("Los wurde geprüft");
-			const hasWon = result.results.some((r) => r.hasWon);
-			log.info("Quick-Check abgeschlossen", { losId: id, hasWon, resultCount: result.results.length });
+			const hasWon = result.result?.hasWon ?? false;
+			log.info("Quick-Check abgeschlossen", { losId: id, hasWon });
 			return result;
 		} catch (e) {
 			error((e as { data?: { message?: string } })?.data?.message || "Quick-Check fehlgeschlagen");
